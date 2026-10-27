@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nostalgia Machine</title>
+<meta name="description" content="Nostalgia Machine: a 1996 to 2005 desktop with the real music charts, movies, TV shows and old websites of the era.">
+<link rel="stylesheet" href="css/style.css?v=76">
+</head>
+<body>
+<div id="desk" data-wall="blue">
+  <header id="menubar">
+    <button class="mi sysmenu" id="sysmenu" data-menu="sysmenu" aria-label="System menu" aria-haspopup="true"></button>
+    <button class="mi app" id="appname" data-menu="app" aria-haspopup="true">Finder</button>
+    <span id="menus" class="menus"></span>
+    <span class="sp"></span>
+    <button class="st" id="snd" aria-pressed="true" aria-label="Sound on or off"><svg viewBox="0 0 20 16" width="18" height="14" aria-hidden="true"><path d="M2 5h3l4-3.5v13L5 11H2z" fill="#222"/><path class="w" d="M12 5a4 4 0 0 1 0 6M14.5 3a7 7 0 0 1 0 10" fill="none" stroke="#222" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <button class="st" id="spot" aria-label="Spotlight search"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="#1b66d1" stroke-width="2"/><path d="M10 10l5 5" stroke="#1b66d1" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <span id="clock" role="button" tabindex="0" title="Date &amp; Time"></span>
+  </header>
+  <div id="menu" role="menu" hidden></div>
+
+  <div class="icons">
+    <button class="dicon" id="ic-cd" aria-label="Open uTunes">
+      <svg viewBox="0 0 64 64"><defs><linearGradient id="cdg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#9fd8ff"/><stop offset=".6" stop-color="#ffb6e6"/><stop offset="1" stop-color="#e8ffb0"/></linearGradient></defs><circle cx="32" cy="32" r="28" fill="url(#cdg)" stroke="#6a6a6a"/><circle cx="32" cy="32" r="9" fill="#ececec" stroke="#8a8a8a"/><circle cx="32" cy="32" r="3" fill="#6a6a6a"/></svg>
+      uTunes
+    </button>
+    <button class="dicon" id="ic-hd" aria-label="Read me">
+      <svg viewBox="0 0 64 64"><defs><linearGradient id="hdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f4"/><stop offset="1" stop-color="#a9adb4"/></linearGradient></defs><rect x="6" y="16" width="52" height="34" rx="6" fill="url(#hdg)" stroke="#555"/><rect x="12" y="38" width="30" height="4" rx="2" fill="#777"/><circle cx="49" cy="40" r="3" fill="#3ddc57" stroke="#1d7a2e"/></svg>
+      Read Me
+    </button>
+  </div>
+
+  <!-- Sign on -->
+  <section class="win sign" id="w-sign" data-app="NIM" style="left:620px;top:80px;width:310px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Sign On</div></div>
+    <div class="body">
+      <div class="banner">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#1a1a1a" stroke-width="10"/><circle cx="42" cy="11" r="8" fill="#1a1a1a" stroke="none"/><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#ffd21a" stroke-width="6"/><circle cx="42" cy="11" r="6" fill="#ffd21a" stroke="none"/></g></svg>
+        <h2>NIM <small>Nostalgia IM</small></h2>
+      </div>
+      <form id="signform" autocomplete="off">
+        <label for="sn">Screen Name<input type="text" id="sn" maxlength="16" placeholder="3 to 16 characters" spellcheck="false"></label>
+        <label for="pw">Password<input type="password" id="pw" value="hunter2hunter2" aria-describedby="pwnote"></label>
+        <div class="note" id="pwnote">No account. The password box is just for the feeling.</div>
+        <div class="prog" id="prog" hidden><i></i></div>
+        <div class="stat" id="stat" aria-live="polite">Ready.</div>
+        <div class="row2"><span class="note">Chats are peer-to-peer. Anyone can join, so keep it anonymous.</span><button class="btn-aqua" id="signbtn" type="submit">Sign On</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Buddy list -->
+  <section class="win" id="w-buddy" data-app="NIM" style="left:700px;top:50px;width:222px;height:450px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Buddy List</div></div>
+    <div class="bl-me"><svg class="bl-av" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#1a1a1a" stroke-width="10"/><circle cx="42" cy="11" r="8" fill="#1a1a1a" stroke="none"/><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#ffd21a" stroke-width="6"/><circle cx="42" cy="11" r="6" fill="#ffd21a" stroke="none"/></g></svg><div class="bl-who"><b id="myname">-</b><span id="mystatus">Connecting...</span></div></div>
+    <div class="bl-groups" id="groups"></div>
+    <div class="bl-bar"><button class="bl-ic" id="bl-prof" type="button" title="My Profile" aria-label="My Profile"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#5a6577"/><path d="M4 21c0-4.5 3.6-7 8-7s8 2.5 8 7z" fill="#5a6577"/></svg></button><button class="bl-ic" id="bl-rooms" type="button" title="Chat Rooms" aria-label="Chat Rooms"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="#5a6577"/><path d="M18 9h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3l-3-3h-3" fill="none" stroke="#5a6577" stroke-width="1.6"/></svg></button><button class="bl-ic" id="bl-off" type="button" title="Sign Off" aria-label="Sign Off"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v8" stroke="#5a6577" stroke-width="2.4" stroke-linecap="round"/><path d="M6.5 6.5a8 8 0 1 0 11 0" fill="none" stroke="#5a6577" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+    <form class="bl-away" id="awayform"><input type="text" id="awaymsg" placeholder="Away message" maxlength="60" aria-label="Away message"><button class="btn-aqua sm" type="submit" id="awaybtn">Away</button></form>
+  </section>
+
+  <!-- Chat room list -->
+  <section class="win" id="w-rooms" data-app="NIM" style="left:330px;top:70px;width:300px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Join a Chat Room</div></div>
+    <div class="body rooms">
+      <div class="rooms-hd"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="10" width="38" height="28" rx="8" fill="#ffd43b" stroke="#8a6a00"/><rect x="22" y="26" width="38" height="28" rx="8" fill="#7a2cff" stroke="#2a0a5a"/></svg><div><h2>Roomz</h2><small>Pick a room. Real people show up when others are in it.</small></div></div>
+      <ul id="roomlist"></ul>
+      <p class="note pad">Rooms are matched through public relays. If a room is empty, a few labeled bots keep it company.</p>
+    </div>
+  </section>
+
+  <!-- uTunes: music only -->
+  <section class="win" id="w-utunes" data-zoom="1" data-app="uTunes" style="left:30px;top:44px;width:640px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">uTunes</div></div>
+    <div class="body metal tunes">
+      <div class="tunes-top">
+        <div class="tbtns">
+          <button class="tb" id="t-prev" aria-label="Previous"><svg viewBox="0 0 16 16"><path d="M2 2h2v12H2zM14 2v12L5 8z"/></svg></button>
+          <button class="tb big" id="t-play" aria-label="Play or pause"><svg viewBox="0 0 16 16" id="t-ico"><path d="M3 1l11 7-11 7z"/></svg></button>
+          <button class="tb" id="t-next" aria-label="Next"><svg viewBox="0 0 16 16"><path d="M12 2h2v12h-2zM2 2l9 6-9 6z"/></svg></button>
+        </div>
+        <div class="lcd"><div class="t" id="t-title">Pick a year, then a song</div><div class="a" id="t-artist">Charts come from Billboard's year-end lists</div></div>
+        <form id="itform" class="srch"><input type="text" id="it-q" placeholder="Search charts" aria-label="Search the charts" autocomplete="off"></form>
+      </div>
+      <div class="tunes-mid">
+        <div class="src" id="it-src"></div>
+        <div class="plist"><table><colgroup><col style="width:34px"><col style="width:40%"><col><col style="width:46px"></colgroup><thead><tr><th>#</th><th>Song</th><th>Artist</th><th>Year</th></tr></thead><tbody id="tracks"></tbody></table></div>
+      </div>
+      <div class="ytbox" id="box-it"><div class="yth" id="yt-it"></div><div class="ytempty">Music video plays here</div></div>
+      <div class="itbar">
+        <button class="sbtn" id="it-shuf" aria-pressed="false" title="Shuffle" aria-label="Shuffle"><svg viewBox="0 0 16 16"><path d="M1 4h3c3 0 4 8 7 8h4M1 12h3c1.2 0 2-1.3 2.8-2.8M10 4h5M12.5 1.5L15 4l-2.5 2.5M12.5 9.5L15 12l-2.5 2.5"/></svg></button>
+        <button class="sbtn" id="it-add" title="Add to My Playlist" aria-label="Add to My Playlist"><svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg></button>
+        <button class="sbtn" id="it-rem" title="Remove from My Playlist" aria-label="Remove from My Playlist" hidden><svg viewBox="0 0 16 16"><path d="M3 8h10"/></svg></button>
+        <button class="txtbtn" id="it-copy" hidden>Copy list</button>
+        <button class="txtbtn" id="it-yt" hidden>Open in YouTube</button>
+        <button class="txtbtn" id="it-burn" hidden>Burn CD</button>
+        <button class="txtbtn" id="it-exp" hidden>Export</button>
+        <div class="tstat" id="it-stat"></div>
+        <button class="sbtn" id="it-vid" aria-pressed="true" title="Show or hide the music video" aria-label="Show or hide the music video"><svg viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="9" height="9" rx="1.5"/><path d="M10.5 7l4-2.5v7L10.5 9z"/></svg></button>
+      </div>
+    </div>
+    <div class="ov burn" id="burn" hidden></div>
+  </section>
+
+  <!-- QuickShow: a video window with a controller bar. Browsing lives in the Movie Guide. -->
+  <section class="win" id="w-qt" data-zoom="1" data-app="QuickShow" style="left:300px;top:70px;width:480px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title" id="qt-wtitle">QuickShow</div></div>
+    <div class="body metal qt">
+      <div class="ytbox qtbox" id="box-qt"><div class="yth" id="yt-qt"></div><div class="ytempty">Pick something in the Movie Guide</div></div>
+      <div class="qtctl2">
+        <button class="tb" id="qt-play" aria-label="Play or pause"><svg viewBox="0 0 16 16" id="qt-ico"><path d="M3 1l11 7-11 7z"/></svg></button>
+        <input type="range" id="qt-seek" min="0" max="1000" value="0" aria-label="Position">
+        <span id="qt-time">0:00</span>
+        <svg viewBox="0 0 20 16" width="16" height="13" aria-hidden="true"><path d="M2 5h3l4-3.5v13L5 11H2z" fill="#333"/></svg>
+        <input type="range" id="qt-vol" min="0" max="100" value="100" aria-label="Volume">
+      </div>
+      <div class="tstat" id="qt-stat">Open a trailer from the Movie Guide.</div>
+    </div>
+  </section>
+
+  <!-- Movie Guide: browse, filter, pick, keep a watchlist -->
+  <section class="win" id="w-guide" data-zoom="1" data-app="Movie Guide" style="left:90px;top:40px;width:700px;height:540px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Movie Guide</div></div>
+    <div class="body guide">
+      <div class="gtop">
+        <div class="tabs" id="g-tabs"><button type="button" class="tab on" data-kind="film">Movies</button><button type="button" class="tab" data-kind="tv">TV Shows</button><button type="button" class="tab" data-kind="watch">Watchlist (<span id="g-wcount">0</span>)</button></div>
+        <button class="btn-aqua sm" id="g-night" type="button">Movie Night</button>
+        <button class="btn-aqua sm" id="g-surprise" type="button">Surprise me</button>
+        <button class="btn-aqua sm" id="g-copy" type="button" hidden>Copy list</button>
+      </div>
+      <div class="gfilters" id="g-filters">
+        <label>Year <select id="g-year"></select></label>
+        <label>Genre <select id="g-genre"></select></label>
+        <label id="g-netw" hidden>Network <select id="g-net"></select></label>
+        <label>Sort <select id="g-sort"><option value="fame">Most famous</option><option value="new">Newest</option><option value="az">A to Z</option></select></label>
+        <input type="text" id="g-q" placeholder="Filter by title" aria-label="Filter by title" autocomplete="off">
+      </div>
+      <div class="gcount" id="g-count">Loading...</div>
+      <ul class="glist" id="g-list"></ul>
+    </div>
+    <div class="ov" id="g-ov" hidden></div>
+  </section>
+
+  <!-- Profile -->
+  <section class="win" id="w-myplace" data-app="NIM" style="left:300px;top:110px;width:600px;height:440px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title" id="p-wtitle">Profile</div></div>
+    <div class="body prof">
+      <div class="hd" id="p-hd"><div class="av" id="p-av">X</div><div><h2 id="p-name">~*~ ~*~</h2><div class="on blink" id="p-on">Online Now!</div><div>Mood: <b id="p-mood">-</b></div><button class="btn-aqua sm" id="p-song" type="button" hidden>Play profile song</button></div></div>
+      <div class="cols">
+        <div>
+          <h3>About me</h3>
+          <p id="p-about" class="about-txt"></p>
+          <form id="editform" hidden>
+            <label for="e-mood">Mood<input type="text" id="e-mood" maxlength="24"></label>
+            <label for="e-about">About me<textarea id="e-about" rows="5" maxlength="280"></textarea></label>
+            <label for="e-song">Profile song (YouTube link)<input type="text" id="e-song" spellcheck="false"></label>
+            <label for="e-color">Color
+              <select id="e-color"><option value="#ff2d95">Hot pink</option><option value="#00b8d9">Cyan</option><option value="#7a2cff">Purple</option><option value="#ff7a00">Orange</option><option value="#2fbf4a">Green</option></select>
+            </label>
+            <button class="btn-aqua sm" type="submit">Save profile</button>
+          </form>
+        </div>
+        <div>
+          <h3 id="t8h">My Top 8</h3>
+          <div class="top8" id="top8"></div>
+          <button class="btn-aqua sm" id="p-im" type="button" hidden>Send an IM</button>
+        </div>
+      </div>
+      <div class="hits" id="p-foot"></div>
+    </div>
+  </section>
+
+  <!-- Sounds -->
+  <section class="win" id="w-sounds" data-app="Sounds" style="left:420px;top:130px;width:360px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Sounds</div></div>
+    <div class="body about">
+      <h2>Your sounds</h2>
+      <p>The default beeps are made in your browser. To get the real feeling, pick your own audio files for each event. They stay in this browser and are never uploaded.</p>
+      <div id="slots"></div>
+      <h2 style="margin-top:14px">Hear the originals</h2>
+      <p>These open YouTube in a new tab.</p>
+      <p><a href="https://www.youtube.com/watch?v=HZShoxgc7a0" target="_blank" rel="noopener">AIM sounds</a> &middot; <a href="https://www.youtube.com/watch?v=hsf9eaq5epI" target="_blank" rel="noopener">AIM message alert</a> &middot; <a href="https://www.youtube.com/watch?v=76MyzOP0vyi0" target="_blank" rel="noopener">56k dial-up handshake</a></p>
+    </div>
+  </section>
+
+  <!-- Arcade: small original games -->
+  <section class="win" id="w-arcade" data-app="Arcade" style="left:250px;top:44px;width:420px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Arcade</div></div>
+    <div class="body arc">
+      <div class="arc-tabs" id="arc-tabs"><button type="button" data-g="snake">Snake</button><button type="button" data-g="mines">Minefield</button><button type="button" data-g="blocks">Blockfall</button><button type="button" data-g="pet">Pixel Pet</button></div>
+      <div class="arc-stage" id="arc-stage"></div>
+      <div class="tstat" id="arc-stat"></div>
+    </div>
+  </section>
+
+  <!-- Mail -->
+  <section class="win" id="w-mail" data-app="Mail" style="left:180px;top:48px;width:600px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Mail</div></div>
+    <div class="body mail">
+      <div class="ml-bar"><button type="button" class="btn-aqua sm" id="ml-get">Get Mail</button><button type="button" class="btn-aqua sm" id="ml-del">Delete</button><button type="button" class="btn-aqua sm" id="ml-set">Settings</button><span id="ml-stat"></span></div>
+      <div class="ml-setp" id="ml-setp" hidden><label>New mail arrives: <select id="ml-freq"><option value="often">Often (every 2 to 4 minutes)</option><option value="normal">Sometimes (every 8 to 12 minutes)</option><option value="rarely">Rarely (every 20 to 30 minutes)</option><option value="never">Only when I press Get Mail</option></select></label></div>
+      <div class="ml-list" id="ml-list"></div>
+      <div class="ml-view" id="ml-view"></div>
+    </div>
+  </section>
+
+
+
+  <!-- TV: an old CRT set. Each channel number is a TV show from 1996 to 2005. -->
+  <section class="win tvwin" id="w-tv" data-zoom="1" data-app="TV" style="left:150px;top:34px;width:660px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">TV</div></div>
+    <div class="body tvbody">
+      <div class="tvset">
+        <div class="tvbezel">
+          <div class="tvscreen" id="box-tv">
+            <div class="tvin" id="tv-in" hidden>
+              <div class="yth" id="yt-tv"></div>
+              <canvas class="tvstatic" id="tv-static" width="160" height="120" hidden></canvas>
+              <div class="osd" id="tv-osd" hidden></div>
+              <div class="osdname" id="tv-name" hidden></div>
+            </div>
+            <div class="crt"></div>
+          </div>
+        </div>
+        <div class="tvpanel">
+          <div class="tvbrand">TIMETRON</div>
+          <div class="tvch" id="tv-chnum">--</div>
+          <div class="tvlbl">CHANNEL</div>
+          <div class="tvbtns"><button type="button" id="tv-chup" aria-label="Channel up">&#9650;</button><button type="button" id="tv-chdn" aria-label="Channel down">&#9660;</button></div>
+          <div class="tvlbl">VOLUME</div>
+          <div class="tvbtns"><button type="button" id="tv-vdn" aria-label="Volume down">&minus;</button><button type="button" id="tv-vup" aria-label="Volume up">+</button></div>
+          <button type="button" class="tvpow" id="tv-pow" aria-label="Power"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v8M6.5 6.5a8 8 0 1 0 11 0"/></svg></button>
+          <div class="tvgrill"></div>
+        </div>
+      </div>
+      <div class="tstat" id="tv-stat">Press the power button.</div>
+    </div>
+  </section>
+
+  <!-- Old Web: the Internet Archive's snapshots of the real web, on the date set in Date & Time -->
+  <section class="win" id="w-web" data-zoom="1" data-app="Old Web" style="left:70px;top:34px;width:760px;height:520px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Old Web</div></div>
+    <div class="body metal webbody">
+      <div class="webbar">
+        <button class="tb" id="web-back" type="button" title="Back" aria-label="Back" disabled><svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5" fill="none" stroke="#333" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="tb" id="web-fwd" type="button" title="Forward" aria-label="Forward" disabled><svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5" fill="none" stroke="#333" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="tb" id="web-home" type="button" title="Home" aria-label="Home"><svg viewBox="0 0 16 16"><path d="M2 8l6-5 6 5v6H10V10H6v4H2z"/></svg></button>
+        <button class="tb" id="web-reload" type="button" title="Reload" aria-label="Reload"><svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2v4H9" fill="none" stroke="#333" stroke-width="1.8"/></svg></button>
+        <form id="web-form" class="webform"><input type="text" id="web-url" placeholder="Type a web address" aria-label="Web address" autocomplete="off" spellcheck="false"></form>
+        <button class="btn-aqua sm" id="web-date" type="button" title="Change the date"></button>
+      </div>
+      <div class="bm" id="web-bm"></div>
+      <div class="webframe">
+        <iframe id="web-frame" title="Old web page" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" referrerpolicy="no-referrer"></iframe>
+        <div class="webhome" id="web-today" hidden></div>
+        <div class="webdial" id="web-dial" hidden></div>
+        <div class="webwait" id="web-wait" hidden><div>Dialing in...</div><div class="pb"><i></i></div><small>Connecting at 56 kbps</small></div>
+      </div>
+      <div class="tstat" id="web-stat">Pick a bookmark or type an address.</div>
+    </div>
+  </section>
+
+  <!-- Date & Time: one date drives the charts, the guide and the old web -->
+  <section class="win" id="w-date" data-app="Date &amp; Time" style="left:330px;top:70px;width:420px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Date &amp; Time</div></div>
+    <div class="body metal datebody">
+      <div class="dtrow">
+        <label>Month <select id="dt-m"></select></label>
+        <label>Day <select id="dt-d"></select></label>
+        <label>Year <select id="dt-y"></select></label>
+      </div>
+      <div class="dtbig" id="dt-big"></div>
+      <div class="dtnote">Set any day from 1996 to 2005. The charts, the Movie Guide and the old web all follow it.</div>
+      <div class="around" id="dt-around"></div>
+    </div>
+  </section>
+
+  <!-- About (filled per app) -->
+  <section class="win" id="w-about" data-app="Finder" style="left:380px;top:150px;width:400px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title" id="about-title">About Nostalgia Machine</div></div>
+    <div class="body about" id="about-body"></div>
+  </section>
+
+  <div id="spotlight" hidden><div class="spbox"><input type="text" id="sp-q" placeholder="Spotlight" aria-label="Spotlight search" autocomplete="off"><ul id="sp-res"></ul></div></div>
+  <div id="boot" hidden>
+    <button id="boot-power" type="button" aria-label="Power on"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v8M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Click to power on</span><small>Nostalgia Machine</small></button>
+    <div id="boot-run" hidden><svg class="blogo" viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="bl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#1a5fd0"/></linearGradient><linearGradient id="bl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd5e2"/></linearGradient></defs><rect x="4" y="4" width="88" height="88" rx="21" fill="url(#bl1)" stroke="#124a9c"/><ellipse cx="48" cy="22" rx="36" ry="16" fill="#fff" opacity=".28"/><rect x="21" y="20" width="54" height="46" rx="8" fill="url(#bl2)" stroke="#5a6678"/><rect x="27" y="26" width="42" height="32" rx="4" fill="#12306c"/><rect x="36" y="35" width="5" height="8" rx="2" fill="#fff"/><rect x="55" y="35" width="5" height="8" rx="2" fill="#fff"/><path d="M36 49c4 6 20 6 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="40" y="66" width="16" height="6" fill="#b9c1ce"/><rect x="28" y="72" width="40" height="7" rx="3" fill="url(#bl2)" stroke="#5a6678"/></svg><div class="btitle">Nostalgia Machine</div><div class="bsub">Computers, music and TV from 1996 to 2005</div><div class="bbar"><i id="boot-fill"></i></div><div class="bmsg"><span class="bspin"></span><span id="boot-msg">Starting up...</span></div><div class="byears" id="boot-years"><span>'96</span><span>'97</span><span>'98</span><span>'99</span><span>'00</span><span>'01</span><span>'02</span><span>'03</span><span>'04</span><span>'05</span></div><div class="bfoot">Model 96-05</div></div>
+  </div>
+  <div id="shut" hidden><div class="shutin"><span class="bspin big"></span><div>Shutting down...</div></div></div>
+  <canvas id="saver" hidden></canvas>
+
+  <nav id="dock" aria-label="Dock"></nav>
+</div>
+<noscript><p style="position:fixed;inset:40px;color:#fff">This site needs JavaScript.</p></noscript>
+<script type="module" src="js/main.js?v=76"></script>
+</body>
+</html>
