@@ -1,9 +1,9 @@
 // Nostalgia Machine: a 1996 to 2005 desktop with peer-to-peer chat (Trystero over public relays, no server or accounts).
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
-import {mountArcade} from './arcade.js?v=76';
-import {mountMail} from './mail.js?v=76';
-import {SAVERS} from './savers.js?v=76';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=76';
+import {mountArcade} from './arcade.js?v=77';
+import {mountMail} from './mail.js?v=77';
+import {SAVERS} from './savers.js?v=77';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=77';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -510,7 +510,7 @@ function checkName(t0) {
 function done() {
   signedIn = true; $('#myname').textContent = me; $('#w-sign').hidden = true; $('#signbtn').disabled = false; $('#prog').hidden = true; $('#prog i').style.width = '0'; $('#stat').textContent = 'Ready.';
   sendPres(); updateStatus(); renderBuddies(); showProfile('me'); openWin('w-buddy'); sfx('door');
-  if (!peers.size) setTimeout(() => { const b = BOTS[0], w = openBotChat(b); addMsg(w, b.n, b.says[0], false); b.idx = 1; sfx('im'); }, 3500);
+  if (!peers.size) setTimeout(() => { const b = BOTS[0]; if (chats['bot:' + b.n] && document.body.contains(chats['bot:' + b.n])) return; const w = openBotChat(b); addMsg(w, b.n, b.says[0], false); b.idx = 1; sfx('im'); }, 3500);
 }
 
 /* ---------- chat rooms ---------- */

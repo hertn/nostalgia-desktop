@@ -10,10 +10,10 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 | | |
 | :---: | :---: |
-| ![The start-up screen](screenshots/boot.png)<br>**Start-up screen** | ![Old Web showing the On this day page](screenshots/oldweb.png)<br>**Old Web**, opening on "On this day" |
-| ![Movie Guide](screenshots/guide.png)<br>**Movie Guide**: open it and find something | ![uTunes showing the 2005 chart](screenshots/utunes.png)<br>**uTunes**, with the 2005 chart |
-| ![Mail with a new message popup](screenshots/mail.png)<br>**Mail**, with a new message arriving | ![A bot's profile in NIM](screenshots/nim.png)<br>**NIM**, a bot's profile |
-| ![Blockfall](screenshots/blockfall.png)<br>**Blockfall** | ![The virtual pet](screenshots/pet.png)<br>**The virtual pet** |
+| ![Old Web showing the On this day page](screenshots/oldweb.png)<br>**Old Web**, opening on "On this day" | ![Movie Guide](screenshots/guide.png)<br>**Movie Guide**: open it and find something |
+| ![uTunes showing the 2005 chart](screenshots/utunes.png)<br>**uTunes**, with the 2005 chart | ![TV playing a show](screenshots/tv.png)<br>**TV**, channel 3 |
+| ![QuickShow playing a trailer](screenshots/quickshow.png)<br>**QuickShow**, playing a trailer | ![Mail with a new message popup](screenshots/mail.png)<br>**Mail**, with a new message arriving |
+| ![NIM with the buddy list, an instant message, a chat room and a profile open](screenshots/nim.png)<br>**NIM**: buddy list, instant message, chat room and profile | ![Blockfall in the Arcade](screenshots/blockfall.png)<br>**Arcade**, playing Blockfall |
 
 ## Why it exists
 
