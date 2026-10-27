@@ -6,6 +6,15 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 **Live demo:** https://hertn.github.io/nostalgia-machine/
 
+## Screenshots
+
+| | |
+| :---: | :---: |
+| ![The start-up screen](screenshots/boot.png)<br>**Start-up screen** | ![Old Web showing the On this day page](screenshots/oldweb.png)<br>**Old Web**, opening on "On this day" |
+| ![Movie Guide](screenshots/guide.png)<br>**Movie Guide**: open it and find something | ![uTunes showing the 2005 chart](screenshots/utunes.png)<br>**uTunes**, with the 2005 chart |
+| ![Mail with a new message popup](screenshots/mail.png)<br>**Mail**, with a new message arriving | ![A bot's profile in NIM](screenshots/nim.png)<br>**NIM**, a bot's profile |
+| ![Blockfall](screenshots/blockfall.png)<br>**Blockfall** | ![The virtual pet](screenshots/pet.png)<br>**The virtual pet** |
+
 ## Why it exists
 
 For anyone who misses the early internet. It is a time capsule to look around in, a place to find something to watch or listen to, and a way to chat with other people who remember.
@@ -20,7 +29,7 @@ For anyone who misses the early internet. It is a time capsule to look around in
 | **Old Web** | Real websites as the Internet Archive saved them near your date. It opens on an "On this day" page with headlines, the number one song and movie, what was on TV and a picture of the day, and it dials in with a modem the first time. |
 | **Mail** | Email coming in, with true-to-era messages: chain letters, forwards, notes from friends and a daily digest of your date. Each one arrives with a chime and a spoken announcement. The **Settings** button sets how often. |
 | **NIM** (Nostalgia IM) | A buddy list, instant messages, public chat rooms and profiles, with the sounds you remember. |
-| **Arcade** | Snake on a phone screen, Minefield, Blockfall (falling blocks), and a Tamagotchi-style virtual pet, a dog or cat that keeps living while the page is closed. |
+| **Arcade** | Snake on a phone screen, Minefield, Blockfall (Tetris-style), and a Tamagotchi-style virtual pet, a dog or cat that keeps living while the page is closed. |
 | **QuickShow** | A small player for trailers and TV openings. |
 | **Sounds** | Pick your own sounds for each event. |
 
