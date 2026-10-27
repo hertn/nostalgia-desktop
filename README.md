@@ -10,20 +10,20 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 <table>
   <tr>
-    <td width="50%" align="center"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on "On this day"</td>
-    <td width="50%" align="center"><img src="screenshots/guide.png" alt="Movie Guide" width="100%"><br><b>Movie Guide</b>: open it and find something</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on "On this day"</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/guide.png" alt="Movie Guide" width="100%"><br><b>Movie Guide</b>: open it and find something</td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="screenshots/utunes.png" alt="uTunes showing the 2005 chart" width="100%"><br><b>uTunes</b>, with the 2005 chart</td>
-    <td width="50%" align="center"><img src="screenshots/tv.png" alt="TV playing a show" width="100%"><br><b>TV</b>, channel 3</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/utunes.png" alt="uTunes showing the 2005 chart" width="100%"><br><b>uTunes</b>, with the 2005 chart</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/tv.png" alt="TV playing a show" width="100%"><br><b>TV</b>, channel 3</td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="screenshots/quickshow.png" alt="QuickShow playing a trailer" width="100%"><br><b>QuickShow</b>, playing a trailer</td>
-    <td width="50%" align="center"><img src="screenshots/mail.png" alt="Mail with a new message popup" width="100%"><br><b>Mail</b>, with a new message arriving</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/quickshow.png" alt="QuickShow playing a trailer" width="100%"><br><b>QuickShow</b>, playing a trailer</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/mail.png" alt="Mail with a new message popup" width="100%"><br><b>Mail</b>, with a new message arriving</td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="screenshots/nim.png" alt="NIM with the buddy list, an instant message, a chat room and a profile open" width="100%"><br><b>NIM</b>: buddy list, instant message, chat room and profile</td>
-    <td width="50%" align="center"><img src="screenshots/blockfall.png" alt="Blockfall in the Arcade" width="100%"><br><b>Arcade</b>, playing Blockfall</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/nim.png" alt="NIM with the buddy list, an instant message, a chat room and a profile open" width="100%"><br><b>NIM</b>, chat rooms and profiles</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/blockfall.png" alt="Blockfall in the Arcade" width="100%"><br><b>Arcade</b>, playing Blockfall</td>
   </tr>
 </table>
 
