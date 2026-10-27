@@ -1,6 +1,8 @@
-# Nostalgia Machine
+<p align="center"><img src="logo.svg" alt="Nostalgia Machine logo" width="128" height="128"></p>
 
-**A computer from 1996 to 2005, running in your browser.**
+<h1 align="center">Nostalgia Machine</h1>
+
+<p align="center"><b>A computer from 1996 to 2005, running in your browser.</b></p>
 
 Set the date and the machine fills with the real music, movies, TV shows and websites of that moment. It looks like an early-2000s Mac desktop, with a dock, a menu bar, a buddy list, a screen saver and a very slow modem. Everything in it is from 1996 to 2005, and nothing newer ever appears.
 
@@ -88,6 +90,7 @@ Then open http://localhost:8765. YouTube embeds need `http(s)`, so opening `inde
 ## Project layout
 
     index.html        the windows and markup
+    logo.svg          the logo from the start-up screen
     css/style.css     all styling
     js/main.js        the desktop, apps, chat, TV, Old Web and menus
     js/data.js        the live data lookups
