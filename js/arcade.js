@@ -159,7 +159,7 @@ function blocks({stage, say, store, sfx, active}) {
     clearTimeout(timer); board = Array.from({length: H}, () => Array(W).fill(0)); bag = []; nextK = take(); score = 0; lines = 0; level = 1; alive = true; started = false; paused = false; spawn(); draw();
     say('Left/Right move, Up or Z turn left, X turns right, Space drops, P pauses. Press any key to start.');
   }
-  function go(f) { if (!alive) { reset(); return; } if (!started) { started = true; loop(); } if (!paused) f(); draw(); }
+  function go(f) { if (!alive) { reset(); return; } if (!started) { started = true; say(''); loop(); } if (!paused) f(); draw(); }
   function loop() { clearTimeout(timer); timer = setTimeout(tick, Math.max(90, 750 - (level - 1) * 65)); }
   function tick() { if (!alive) return; if (!paused && active() && !hit(cur.m, cur.x, cur.y + 1)) cur.y++; else if (!paused && active()) lock(); draw(); loop(); }
   function move(d) { if (!hit(cur.m, cur.x + d, cur.y)) cur.x += d; }

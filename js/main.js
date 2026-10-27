@@ -1,9 +1,9 @@
 // Nostalgia Machine: a 1996 to 2005 desktop with peer-to-peer chat (Trystero over public relays, no server or accounts).
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
-import {mountArcade} from './arcade.js?v=77';
-import {mountMail} from './mail.js?v=77';
-import {SAVERS} from './savers.js?v=77';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=77';
+import {mountArcade} from './arcade.js?v=78';
+import {mountMail} from './mail.js?v=78';
+import {SAVERS} from './savers.js?v=78';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=78';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
