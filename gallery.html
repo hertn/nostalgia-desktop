@@ -4,55 +4,51 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nostalgia Desktop: gallery</title>
-<meta name="description" content="A gallery of Nostalgia Desktop, the 1996 to 2005 computer in your browser.">
+<meta name="description" content="Screenshots of Nostalgia Desktop, the 1996 to 2005 computer in your browser.">
 <style>
-:root{--ink:#f3eee0;--dim:#a39c88;--bg:#0d0d0f;--film:#151311;--hole:#d8d2c3;--accent:#ffe45e}
+:root{--ink:#f3eee0;--dim:#a39c88;--bg:#0d0d0f;--accent:#ffe45e}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 30%,#23201b 0,var(--bg) 70%);color:var(--ink);font:15px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif}
-header{display:flex;align-items:baseline;gap:14px;padding:14px 22px 0}
-header h1{margin:0;font:italic 800 22px Georgia,"Times New Roman",serif;letter-spacing:-.3px}
-header h1 b{color:var(--accent);font-weight:800}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#23201b 0,var(--bg) 70%) fixed;color:var(--ink);font:15px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;min-height:100vh}
+header{display:flex;align-items:baseline;gap:14px;padding:18px 22px 6px;max-width:1200px;margin:0 auto}
+header h1{margin:0;font:italic 800 24px Georgia,"Times New Roman",serif;letter-spacing:-.3px}
+header h1 b{color:var(--accent)}
 header a{color:var(--dim);font-size:13px;text-decoration:none}
 header a:hover{color:var(--ink);text-decoration:underline}
 header .sp{margin-left:auto}
-main{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px 70px 6px;position:relative}
-.stage{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
-.stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 14px 50px rgba(0,0,0,.7);cursor:pointer;background:#000}
-.cap{text-align:center;min-height:44px}
-.cap b{display:block;font:700 18px Georgia,serif}
-.cap span{color:var(--dim);font-size:13px}
-.nav{position:absolute;top:50%;transform:translateY(-60%);width:46px;height:46px;border-radius:50%;border:1px solid #444;background:rgba(20,18,16,.8);color:var(--ink);font-size:20px;cursor:pointer}
-.nav:hover{background:#2c2822;border-color:var(--accent)}
-.nav.prev{left:12px}.nav.next{right:12px}
-.count{position:absolute;top:14px;right:76px;font:12px var(--ui,Arial);color:var(--dim);letter-spacing:1px}
-/* the film strip */
-.strip{flex:none;background:var(--film);border-top:1px solid #2a2622;border-bottom:1px solid #2a2622;padding:0}
-.reel{display:flex;gap:10px;overflow-x:auto;padding:12px 14px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#555 #151311}
-.frame{flex:none;position:relative;width:176px;height:110px;padding:0;border:3px solid #000;border-radius:3px;background:#000;cursor:pointer;opacity:.62;transition:opacity .15s,transform .15s}
-.frame img{display:block;width:100%;height:100%;object-fit:cover}
-.frame:hover{opacity:.95}
-.frame.on{opacity:1;outline:3px solid var(--accent);outline-offset:1px;transform:translateY(-2px)}
-.frame i{display:none;position:absolute;left:4px;bottom:3px;font:700 10px Arial,sans-serif;font-style:normal;color:#ffb347;text-shadow:0 1px 2px #000}
-@media (max-width:700px){main{padding:10px 12px 4px}.nav{display:none}.count{right:14px}.frame{width:128px;height:80px}}
+.grid{max-width:1200px;margin:0 auto;padding:12px 22px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.grid figure{margin:0}
+.grid button{display:block;width:100%;padding:0;border:0;background:#000;border-radius:8px;overflow:hidden;cursor:zoom-in;box-shadow:0 6px 22px rgba(0,0,0,.55);transition:transform .15s,box-shadow .15s}
+.grid button:hover,.grid button:focus-visible{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.7);outline:2px solid var(--accent)}
+.grid img{display:block;width:100%;aspect-ratio:1400/860;object-fit:cover}
+.grid figcaption{padding:7px 2px 0;font:700 14px Georgia,serif}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px 70px;background:rgba(6,6,8,.93)}
+.lb.open{display:flex}
+.lb img{max-width:100%;min-height:0;flex:1;object-fit:contain;border-radius:8px;box-shadow:0 14px 50px rgba(0,0,0,.7)}
+.lb .cap{text-align:center;max-width:760px}
+.lb .cap b{display:block;font:700 18px Georgia,serif}
+.lb .cap span{color:var(--dim);font-size:13px}
+.lb button{position:absolute;width:46px;height:46px;border-radius:50%;border:1px solid #555;background:rgba(30,28,25,.85);color:var(--ink);font-size:20px;cursor:pointer}
+.lb button:hover{border-color:var(--accent)}
+.lb .prev{left:12px;top:50%}.lb .next{right:12px;top:50%}.lb .x{right:14px;top:14px;font-size:22px}
+.lb .n{position:absolute;left:18px;top:20px;color:var(--dim);font-size:12px;letter-spacing:1px}
+@media (max-width:700px){.lb{padding:60px 10px 20px}.lb .prev,.lb .next{top:auto;bottom:14px}}
 </style>
 </head>
 <body>
 <header>
   <h1>Nostalgia <b>Desktop</b></h1>
-  <span style="color:var(--dim);font-size:13px">gallery</span>
   <a class="sp" href="./">Open the desktop</a>
   <a href="https://github.com/hertn/nostalgia-desktop">GitHub</a>
 </header>
-<main>
-  <div class="count" id="count"></div>
-  <button class="nav prev" id="prev" aria-label="Previous picture">&#9664;</button>
-  <div class="stage"><img id="big" alt=""></div>
+<div class="grid" id="grid"></div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Picture viewer">
+  <div class="n" id="n"></div>
+  <button class="x" id="x" aria-label="Close">&times;</button>
+  <button class="prev" id="prev" aria-label="Previous picture">&#9664;</button>
+  <img id="big" alt="">
   <div class="cap"><b id="ttl"></b><span id="sub"></span></div>
-  <button class="nav next" id="next" aria-label="Next picture">&#9654;</button>
-</main>
-<div class="strip">
-  <div class="reel" id="reel" role="listbox" aria-label="Pictures"></div>
+  <button class="next" id="next" aria-label="Next picture">&#9654;</button>
 </div>
 <script>
 const SHOTS = [
@@ -70,27 +66,26 @@ const SHOTS = [
   ['mail', 'Mail', "You've got mail."],
   ['blockfall', 'Arcade', 'Snake, Minefield, Blockfall and a Pixel Pet.']
 ];
-const $ = (s) => document.querySelector(s), big = $('#big'), reel = $('#reel');
-let cur = 0;
+const $ = (s) => document.querySelector(s), lb = $('#lb'), big = $('#big');
+let cur = 0, opener = null;
 SHOTS.forEach(([f, t], i) => {
-  const b = document.createElement('button'); b.className = 'frame'; b.type = 'button'; b.setAttribute('role', 'option'); b.title = t;
-  const im = new Image(); im.src = 'screenshots/thumbs/' + f + '.jpg'; im.alt = t; im.loading = 'lazy';
-  b.append(im); b.onclick = () => show(i); reel.appendChild(b);
+  const fig = document.createElement('figure'), b = document.createElement('button'), im = new Image(), cap = document.createElement('figcaption');
+  b.type = 'button'; b.setAttribute('aria-label', 'Open ' + t); im.src = 'screenshots/thumbs/' + f + '.jpg'; im.alt = t; cap.textContent = t;
+  b.append(im); b.onclick = () => { opener = b; show(i); lb.classList.add('open'); $('#x').focus(); }; fig.append(b, cap); $('#grid').appendChild(fig);
 });
-function show(i, keep) {
+function show(i) {
   cur = (i + SHOTS.length) % SHOTS.length; const [f, t, s] = SHOTS[cur];
-  big.src = 'screenshots/' + f + '.png'; big.alt = t + '. ' + s; $('#ttl').textContent = t; $('#sub').textContent = s;
-  $('#count').textContent = '' + String(cur + 1).padStart(2, '0') + ' / ' + SHOTS.length;
-  [...reel.children].forEach((c, k) => { c.classList.toggle('on', k === cur); c.setAttribute('aria-selected', String(k === cur)); });
-  const c = reel.children[cur]; reel.scrollTo({left: c.offsetLeft - reel.clientWidth / 2 + c.offsetWidth / 2});
-  if (!keep) { try { history.replaceState(null, '', '#' + f); } catch (e) { /* file:// */ } }
-  const nx = new Image(); nx.src = 'screenshots/' + SHOTS[(cur + 1) % SHOTS.length][0] + '.png';
+  big.src = 'screenshots/' + f + '.png'; big.alt = t + '. ' + s; $('#ttl').textContent = t; $('#sub').textContent = s; $('#n').textContent = (cur + 1) + ' / ' + SHOTS.length;
+  try { history.replaceState(null, '', '#' + f); } catch (e) { /* file:// */ }
+  new Image().src = 'screenshots/' + SHOTS[(cur + 1) % SHOTS.length][0] + '.png';
 }
-$('#prev').onclick = () => show(cur - 1); $('#next').onclick = () => show(cur + 1); big.onclick = () => show(cur + 1);
-addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(cur + 1); else if (e.key === 'ArrowLeft') show(cur - 1); else if (e.key === 'Home') show(0); else if (e.key === 'End') show(SHOTS.length - 1); });
+function close() { lb.classList.remove('open'); try { history.replaceState(null, '', location.pathname); } catch (e) { /* file:// */ } if (opener) opener.focus(); }
+$('#prev').onclick = () => show(cur - 1); $('#next').onclick = () => show(cur + 1); $('#x').onclick = close;
+lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+addEventListener('keydown', (e) => { if (!lb.classList.contains('open')) return; if (e.key === 'ArrowRight') show(cur + 1); else if (e.key === 'ArrowLeft') show(cur - 1); else if (e.key === 'Escape') close(); });
 let x0 = null; big.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, {passive: true});
 big.addEventListener('touchend', (e) => { if (x0 == null) return; const d = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(d) > 40) show(cur + (d < 0 ? 1 : -1)); });
-const start = SHOTS.findIndex((s) => s[0] === location.hash.slice(1)); show(start >= 0 ? start : 0, true);
+const start = SHOTS.findIndex((s) => s[0] === location.hash.slice(1)); if (start >= 0) { show(start); lb.classList.add('open'); }
 </script>
 </body>
 </html>
