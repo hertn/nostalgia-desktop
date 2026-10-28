@@ -101,10 +101,11 @@ Then open http://localhost:8765. YouTube embeds need `http(s)`, so opening `inde
     CHANGELOG.md      what changed and when
     js/arcade.js      the games
     js/mail.js        the inbox
-    js/catalog.js     the catalog viewer (page flipping, zoom, full screen)
+    js/catalog.js     the page viewer shared by Catalog and TV Guide (flipping, zoom, full screen)
     js/tvguide.js     the TV Guide books (recreated listing pages, real TV Guide scans)
     js/tvsched.js     reads Wikipedia's TV schedule tables into plain data
     js/savers.js      the screen savers
+    gallery.html      screenshot gallery (thumbnail grid with lightbox)
 
 ## Credits
 
