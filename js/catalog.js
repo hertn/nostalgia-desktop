@@ -7,7 +7,7 @@ export function mountCatalog(env) {
   const {$, store, getEra, data} = env;
   const {catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} = data;
   const stage = $('#bk-stage'), book = $('#bk-book'), side = $('#bk-side'), where = $('#bk-where'), stat = $('#ct-stat'), title = $('#bk-title'), lib = $('#bk-lib'), pgIn = $('#bk-go');
-  const st = {year: 0, list: [], cur: null, spread: 0, flipping: false, z: 1, manual: false, loaded: false, season: '', mixed: false, tok: 0, sideOn: true};
+  const st = {year: 0, list: [], cur: null, spread: 0, flipping: false, z: 1, manual: false, loaded: false, tok: 0, sideOn: true};
   const pos = store.get('catpos', {}); const savePos = () => { if (st.cur) { pos[st.cur.title] = st.spread; store.set('catpos', pos); } };
 
   // ---- loading. The scan server drops connections when more than two requests run at once, so everything
@@ -141,9 +141,9 @@ export function mountCatalog(env) {
   }
 
   // ---- which book: the one that fits the date on the clock, or any other from that year
-  // the clock's quarter picks the season, and the library shows only that year's books of that season
+  // the whole year is on the shelf; the book for the clock's quarter opens (Spring and Summer to June, Fall and Winter to September, then Christmas)
   const seasonOf = (m) => (m <= 6 ? 'Spring Summer' : m <= 9 ? 'Fall Winter' : 'Christmas');
-  const pick = () => st.list[0] || null;
+  const pick = () => st.list.find((c) => c.season === seasonOf(getEra().m)) || st.list[0] || null;
   function open(c) {
     if (!c) { stat.textContent = 'No catalog from this year.'; return; }
     st.tok++; zoom(1); st.cur = {title: c.title, pages: c.pages}; st.spread = Math.min(pos[c.title] || 0, Math.floor(c.pages / 2));
@@ -151,7 +151,7 @@ export function mountCatalog(env) {
   }
   function credit() { stat.textContent = 'Scans courtesy of '; const a = el('a', null, 'christmas.musetechnical.com'); a.href = SCANS_SITE; a.target = '_blank'; a.rel = 'noopener'; stat.appendChild(a); }
   function drawLib() {
-    lib.innerHTML = ''; lib.appendChild(el('div', 'bk-lt', (st.mixed ? 'Catalogs from ' : st.season.replace(' ', '/') + ' catalogs from ') + st.year));
+    lib.innerHTML = ''; lib.appendChild(el('div', 'bk-lt', 'Catalogs from ' + st.year));
     const g = el('div', 'bk-lg');
     st.list.forEach((c) => {
       const b = el('button', 'bk-lb' + (st.cur && st.cur.title === c.title ? ' on' : '')); b.type = 'button';
@@ -165,8 +165,7 @@ export function mountCatalog(env) {
   }
   async function load() {
     const y = getEra().y, tok = ++st.tok; st.year = y; st.loaded = true; $('#bk-lib-btn').textContent = 'Library'; stat.textContent = 'Opening the catalog...'; st.cur = null; book.innerHTML = ''; side.innerHTML = '';
-    const sn = seasonOf(getEra().m); st.season = sn;
-    try { const all = await catalogsFor(y), now = all.filter((c) => c.season === sn); st.list = now.length ? now : all; st.mixed = !now.length; } catch (e) {
+    try { st.list = await catalogsFor(y); } catch (e) {
       if (tok !== st.tok) return; stat.textContent = ''; book.innerHTML = '';
       const m = el('div', 'bk-msg', 'The catalogs did not arrive. Check your connection. '), b = el('button', 'btn-aqua sm', 'Try again'); b.type = 'button'; b.onclick = load; m.appendChild(b); book.appendChild(m); return;
     }
@@ -248,7 +247,7 @@ export function mountCatalog(env) {
   });
   return {
     ensure() { if (!st.loaded) load(); },
-    eraChanged() { if (!st.loaded) return; if (getEra().y !== st.year || seasonOf(getEra().m) !== st.season) { st.manual = false; load(); } else if (!st.manual) { const c = pick(); if (c && (!st.cur || st.cur.title !== c.title)) open(c); } },
+    eraChanged() { if (!st.loaded) return; if (getEra().y !== st.year) { st.manual = false; load(); } else if (!st.manual) { const c = pick(); if (c && (!st.cur || st.cur.title !== c.title)) open(c); } },
     turn, fullscreen, zoomIn: () => step(1), zoomOut: () => step(-1), zoomFit: () => zoom(1), first: () => go(0), last: () => go(lastSpread()), library: () => { if (st.loaded) { drawLib(); lib.hidden = false; } },
     toggleSide: () => $('#bk-side-btn').click(), page: () => st.cur && pagesOf(st.spread)[0]
   };
