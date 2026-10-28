@@ -10,7 +10,7 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 ## Screenshots
 
-<p align="center"><a href="https://hertn.github.io/nostalgia-desktop/gallery.html"><img src="screenshots/filmstrip.png" alt="A film strip of screenshots" width="100%"></a><br><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Open the full film strip (13 pictures)</a></b></p>
+<p align="center"><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Browse the full gallery (13 pictures)</a></b></p>
 
 <table>
   <tr>
