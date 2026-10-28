@@ -6,7 +6,7 @@
 <title>Nostalgia Desktop</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
 <meta name="description" content="Nostalgia Desktop: a 1996 to 2005 desktop with the real music charts, movies, TV shows and old websites of the era.">
-<link rel="stylesheet" href="css/style.css?v=79">
+<link rel="stylesheet" href="css/style.css?v=85">
 </head>
 <body>
 <div id="desk" data-wall="blue">
@@ -125,6 +125,7 @@
     <div class="body guide">
       <div class="gtop">
         <div class="tabs" id="g-tabs"><button type="button" class="tab on" data-kind="film">Movies</button><button type="button" class="tab" data-kind="tv">TV Shows</button><button type="button" class="tab" data-kind="watch">Watchlist (<span id="g-wcount">0</span>)</button></div>
+        <span class="gviews" id="g-views" hidden><button type="button" data-v="list" class="on">List</button><button type="button" data-v="shelf">Shelf</button></span>
         <button class="btn-aqua sm" id="g-night" type="button">Movie Night</button>
         <button class="btn-aqua sm" id="g-surprise" type="button">Surprise me</button>
         <button class="btn-aqua sm" id="g-copy" type="button" hidden>Copy list</button>
@@ -138,6 +139,7 @@
       </div>
       <div class="gcount" id="g-count">Loading...</div>
       <ul class="glist" id="g-list"></ul>
+      <div class="gshelf" id="g-shelf" hidden></div>
     </div>
     <div class="ov" id="g-ov" hidden></div>
   </section>
@@ -191,6 +193,27 @@
       <div class="arc-tabs" id="arc-tabs"><button type="button" data-g="snake">Snake</button><button type="button" data-g="mines">Minefield</button><button type="button" data-g="blocks">Blockfall</button><button type="button" data-g="pet">Pixel Pet</button></div>
       <div class="arc-stage" id="arc-stage"></div>
       <div class="tstat" id="arc-stat"></div>
+    </div>
+  </section>
+
+  <!-- TV Guide: real scanned TV Guides where they survive, a week of recreated printed listings otherwise -->
+  <section class="win" id="w-tvg" data-zoom="1" data-app="TV Guide" style="left:70px;top:40px;width:780px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">TV Guide</div></div>
+    <div class="body cat">
+      <div class="bk-bar">
+        <button type="button" class="btn-aqua sm" id="tg-side-btn">Pages</button><button type="button" class="btn-aqua sm" id="tg-lib-btn">Library</button>
+        <span class="bk-title" id="tg-title"></span>
+        <button type="button" class="btn-aqua sm" id="tg-prev" aria-label="Previous page">&#9664;</button><button type="button" class="btn-aqua sm" id="tg-next" aria-label="Next page">&#9654;</button>
+        <button type="button" class="btn-aqua sm" id="tg-zout" aria-label="Zoom out" disabled>&minus;</button><button type="button" class="btn-aqua sm" id="tg-zin" aria-label="Zoom in">+</button>
+        <button type="button" class="btn-aqua sm" id="tg-fs" aria-label="Full screen" title="Full screen (F)">&#10530;</button>
+        <input type="text" id="tg-go" size="4" aria-label="Go to page" placeholder="Page">
+      </div>
+      <div class="bk-main">
+        <div class="bk-side" id="tg-side"></div>
+        <div class="bk-stage" id="tg-stage"><div class="bk-book" id="tg-book"></div><div class="bk-lib" id="tg-lib" hidden></div></div>
+      </div>
+      <div class="bk-foot"><span id="tg-where"></span></div>
+      <div class="tstat" id="tg-stat"></div>
     </div>
   </section>
 

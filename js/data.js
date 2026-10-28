@@ -2,6 +2,7 @@
 //  - songs by year: Wikipedia's Billboard Year-End Hot 100 tables
 //  - films and TV by year: Wikidata (ranked by how many Wikipedias cover them)
 //  - finding a playable video: public Piped search instances, with fallbacks
+import {readSchedule} from './tvsched.js?v=1';
 const DAY = 864e5;
 export const YEARS = [1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005];
 export const FIRST = 1996, LAST = 2005;
@@ -226,4 +227,21 @@ export async function catalogThumbs(title, start, count) {
   const j = await getJSON(SCANS + 'CatalogPages?strCatalogName=' + encodeURIComponent(title) + '&strPageStart=' + start + '&strPagesToGet=' + count, 40000);
   const out = {}; (j || []).forEach((p) => { const n = parseInt(p.pageImageName, 10); if (n && p.pageThumbnailImage) out[n] = 'data:image/jpeg;base64,' + p.pageThumbnailImage; });
   return out;
+}
+
+// ---- TV schedules: Wikipedia's network lineup tables for one school year (September to August), all six broadcast networks
+async function wikiPage(title) {
+  const url = 'https://en.wikipedia.org/w/api.php?action=parse&format=json&formatversion=2&prop=text&origin=*&page=' + encodeURIComponent(title);
+  for (let i = 0; i < 2; i++) { try { const j = await getJSON(url, 30000); if (j.parse) return new DOMParser().parseFromString(j.parse.text, 'text/html'); } catch (e) { /* try once more */ } await new Promise((r) => setTimeout(r, 1500)); }
+  return null;
+}
+export async function tvSchedule(year, month) {
+  const sy = month >= 9 ? year : year - 1, key = 'tvs1:' + sy, hit = cache.get(key, 90 * DAY); if (hit) return hit;
+  const yy = sy + '\u2013' + (sy + 1 === 2000 ? '2000' : String(sy + 1).slice(-2)), base = yy + ' United States network television schedule';
+  const out = {};
+  for (const [k, suf] of [['prime', ''], ['day', ' (daytime)'], ['late', ' (late night)']]) {
+    const doc = await wikiPage(base + suf); out[k] = doc ? readSchedule(doc, k) : {};
+  }
+  if (!Object.keys(out.prime).length) throw new Error('No schedule');
+  cache.set(key, out); return out;
 }

@@ -43,10 +43,11 @@ For anyone who misses the early internet. It is a time capsule to look around in
 
 | App | What it does |
 | --- | --- |
-| **Movie Guide** | Don't know what to watch? Open it and find something. Browse movies and TV shows from the era, filter by year, genre or network, press the **Surprise me** button for a random pick, or press the **Movie Night** button to get a double feature. Save favorites to a watchlist. |
+| **Movie Guide** | Don't know what to watch? Open it and find something. Browse movies and TV shows from the era, filter by year, genre or network, press the **Surprise me** button for a random pick, or press the **Movie Night** button to get a double feature. Save favorites to a watchlist, then switch it to the **Shelf**: your saved titles stand on a video store shelf, and clicking boxes builds tonight's bill with start times, an intermission and when the lights come up, ready to copy or print. |
 | **uTunes** | The Billboard Year-End Hot 100 for every year, with the music videos. Build a playlist, then send it to Spotify or Apple Music (see below). |
 | **TV** | An old TV with channels 1 to 69: shows from the era, a news channel (channel 1) from the exact date on your clock, commercials and Saturday morning cartoons. |
 | **Old Web** | Real websites as the Internet Archive saved them near your date. It opens on an "On this day" page with headlines, the number one song and movie, what was on TV and a picture of the day, and it dials in with a modem the first time. |
+| **TV Guide** | The printed TV listings, in the same page-flipping viewer as the Catalog. It opens the week on your clock as a recreated magazine: four pages for every day of what ABC, CBS, NBC, Fox, UPN and The WB ran, with the prime time hours in yellow. The Library also holds the real TV Guide issues that survive online as scans (1997 to 2002), and one opens by itself when its week matches your clock. |
 | **Catalog** | The real printed JCPenney and Sears catalogs of the year on your clock, as page scans you flip through like a book: every book of the year on your clock, opening on the one for the current quarter (Spring and Summer from January to June, Fall and Winter from July to September, Christmas from October to December). Click the sides or drag to turn pages, zoom in, jump with the page sidebar, open the **Library** for the older books of that year, or press **F** for true full screen. |
 | **Mail** | Email coming in, with true-to-era messages: chain letters, forwards, notes from friends and a daily digest of your date. Each one arrives with a chime and a spoken announcement. The **Settings** button sets how often. |
 | **NIM** (Nostalgia IM) | A buddy list, instant messages, public chat rooms and profiles, with the sounds you remember. |
@@ -107,6 +108,8 @@ Then open http://localhost:8765. YouTube embeds need `http(s)`, so opening `inde
     js/arcade.js      the games
     js/mail.js        the inbox
     js/catalog.js     the catalog viewer (page flipping, zoom, full screen)
+    js/tvguide.js     the TV Guide books (recreated listing pages, real TV Guide scans)
+    js/tvsched.js     reads Wikipedia's TV schedule tables into plain data
     js/savers.js      the screen savers
 
 ## Credits

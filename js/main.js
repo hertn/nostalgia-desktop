@@ -2,9 +2,10 @@
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
 import {mountArcade} from './arcade.js?v=78';
 import {mountMail} from './mail.js?v=78';
-import {mountCatalog} from './catalog.js?v=93';
+import {mountCatalog} from './catalog.js?v=94';
+import {guideSource} from './tvguide.js?v=6';
 import {SAVERS} from './savers.js?v=78';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} from './data.js?v=84';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, tvSchedule, catalogThumbs, SCANS_SITE} from './data.js?v=85';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -230,6 +231,7 @@ const icons = {
   buddy: '<svg viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#1a1a1a" stroke-width="10"/><circle cx="42" cy="11" r="8" fill="#1a1a1a" stroke="none"/><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#ffd21a" stroke-width="6"/><circle cx="42" cy="11" r="6" fill="#ffd21a" stroke="none"/></g></svg>',
   rooms: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a46bff"/><stop offset="1" stop-color="#4b1d8f"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g6)" stroke="#2a0a5a"/><rect x="11" y="14" width="30" height="22" rx="7" fill="#ffd43b" stroke="#8a6a00"/><rect x="25" y="28" width="28" height="20" rx="7" fill="#fff" stroke="#c9b6f5"/><ellipse cx="32" cy="12" rx="24" ry="9" fill="#fff" opacity=".28"/></svg>',
   tunes: '<svg viewBox="0 0 64 64"><defs><radialGradient id="g2" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#d9f0ff"/><stop offset=".5" stop-color="#3d95f0"/><stop offset="1" stop-color="#0c47a6"/></radialGradient></defs><circle cx="32" cy="32" r="29" fill="url(#g2)" stroke="#0b3a85"/><path d="M26 18v22a6 6 0 1 0 3 5V26l14-3v12a6 6 0 1 0 3 5V15z" fill="#fff"/><ellipse cx="32" cy="15" rx="22" ry="10" fill="#fff" opacity=".3"/></svg>',
+  tvg: '<svg viewBox="0 0 64 64"><defs><linearGradient id="gt1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f5fb0"/><stop offset="1" stop-color="#1b2a63"/></linearGradient></defs><rect x="12" y="4" width="42" height="56" rx="4" fill="url(#gt1)" stroke="#0e1738" stroke-width="1.5"/><rect x="17" y="9" width="32" height="15" rx="2" fill="#ffe45e"/><text x="33" y="21.5" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="900" font-size="14" fill="#d4161c">TV</text><g fill="#cfd8f5"><rect x="17" y="28" width="9" height="5"/><rect x="28" y="28" width="21" height="5"/><rect x="17" y="35" width="20" height="5"/><rect x="39" y="35" width="10" height="5"/><rect x="17" y="42" width="9" height="5"/><rect x="28" y="42" width="21" height="5"/></g><rect x="17" y="50" width="32" height="4" rx="1" fill="#d4161c"/></svg>',
   cat: '<svg viewBox="0 0 64 64"><defs><linearGradient id="gc1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a4d"/><stop offset="1" stop-color="#b3261a"/></linearGradient></defs><rect x="9" y="5" width="46" height="54" rx="5" fill="url(#gc1)" stroke="#6e130b" stroke-width="1.5"/><rect x="15" y="12" width="34" height="14" rx="2" fill="#fff6dc"/><path d="M19 19h26" stroke="#b3261a" stroke-width="3" stroke-linecap="round"/><rect x="17" y="31" width="14" height="14" rx="2" fill="#ffe7a8"/><rect x="34" y="31" width="14" height="14" rx="2" fill="#bfe3ff"/><rect x="17" y="48" width="31" height="4" rx="2" fill="#fff6dc" opacity=".8"/><g fill="#d9d9d9" stroke="#555" stroke-width="1"><circle cx="9" cy="14" r="2.6"/><circle cx="9" cy="24" r="2.6"/><circle cx="9" cy="34" r="2.6"/><circle cx="9" cy="44" r="2.6"/><circle cx="9" cy="54" r="2.6"/></g></svg>',
   tv: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g11" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7b7f88"/><stop offset="1" stop-color="#34373d"/></linearGradient><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6f3ff"/><stop offset="1" stop-color="#4aa6d8"/></linearGradient></defs><path d="M24 14L16 4M40 14L48 4" stroke="#555" stroke-width="2.5" stroke-linecap="round"/><rect x="4" y="14" width="56" height="42" rx="9" fill="url(#g11)" stroke="#1d1f23" stroke-width="2"/><rect x="9" y="19" width="34" height="32" rx="7" fill="url(#g12)" stroke="#111" stroke-width="1.5"/><circle cx="52" cy="26" r="3.4" fill="#cfd2d8" stroke="#222"/><circle cx="52" cy="38" r="3.4" fill="#cfd2d8" stroke="#222"/><path d="M48 46h8" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>',
   qt: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c6a80"/><stop offset="1" stop-color="#1d2433"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g8)" stroke="#0b0f18"/><circle cx="32" cy="32" r="17" fill="#3d95f0" stroke="#d9f0ff" stroke-width="2"/><path d="M27 23l16 9-16 9z" fill="#fff"/><ellipse cx="32" cy="14" rx="24" ry="9" fill="#fff" opacity=".25"/></svg>',
@@ -244,6 +246,7 @@ const dockItems = [
   {k: 'buddy', label: 'NIM', wins: ['w-sign', 'w-buddy', 'w-rooms', 'w-myplace'], open: () => (signedIn ? 'w-buddy' : 'w-sign')},
   {k: 'tunes', label: 'uTunes', wins: ['w-utunes'], open: () => 'w-utunes'},
   {k: 'guide', label: 'Movie Guide', wins: ['w-guide'], open: () => 'w-guide'},
+  {k: 'tvg', label: 'TV Guide', wins: ['w-tvg'], open: () => { tvg.ensure(); return 'w-tvg'; }},
   {k: 'cat', label: 'Catalog', wins: ['w-cat'], open: () => { cat.ensure(); return 'w-cat'; }},
   {k: 'tv', label: 'TV', wins: ['w-tv'], open: () => 'w-tv'},
   {k: 'qt', label: 'QuickShow', wins: ['w-qt'], open: () => 'w-qt'},
@@ -996,11 +999,12 @@ function mailPop(m) {
   clearTimeout(p._t); p._t = setTimeout(() => { p.hidden = true; }, 7000);
 }
 const mail = mountMail({$, store, sfx, MONTHS, DOWS, getEra: () => era, getDigest: (e) => onThisDay(e.y, e.m, e.d), setBadge: mailSetBadge, onNew: mailPop, ready: () => boot.hidden || /noboot/.test(location.search + location.hash)});
+const tvg = mountCatalog({$, store, getEra: () => era, source: guideSource({getEra: () => era, data: {tvSchedule}}), opts: {p: 'tg', win: 'w-tvg', stat: 'tg-stat', pos: 'tvgpos', cache: 'nd-guide-1'}});
 const cat = mountCatalog({$, store, getEra: () => era, data: {catalogsFor, catalogPage, catalogThumbs, SCANS_SITE}});
 const arcade = mountArcade({$, $$, store, sfx, active: () => { const w = $('#w-arcade'); return !w.hidden && w.classList.contains('active'); }});
 
 /* Movie Guide: filter movies and shows from 1996 to 2005, pick one, keep a watchlist */
-const g = {kind: 'film', data: {film: null, tv: null}, year: 'all', genre: 'all', net: 'all', sort: 'fame', q: '', pick: null, tok: 0, watch: store.get('watch', [])};
+const g = {kind: 'film', data: {film: null, tv: null}, year: 'all', genre: 'all', net: 'all', sort: 'fame', q: '', pick: null, tok: 0, watch: store.get('watch', []), view: store.get('wview', 'list'), night: store.get('tonight', []), at: store.get('tonightat', 1170)};
 const hueOf = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; };
 const imdbUrl = (x) => (x.imdb ? 'https://www.imdb.com/title/' + x.imdb + '/' : 'https://www.imdb.com/find/?q=' + encodeURIComponent(x.title));
 const inWatch = (kind, title) => g.watch.some((w) => w.kind === kind && w.title === title);
@@ -1092,7 +1096,13 @@ async function movieNight() {
   const mins = pair.reduce((n, x) => n + (x.rt || 0), 0), bar = document.createElement('div'), row = document.createElement('div'); bar.className = 'nbar'; row.className = 'nbtns';
   const total = document.createElement('div'); total.textContent = mins ? 'Total running time: ' + Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm. Get snacks.' : 'Get snacks.';
   const plan = 'Movie night: ' + pair.map((x) => x.title + ' (' + x.y + ')').join(' + ');
-  row.append(btn('Another pair', 'btn-aqua sm', movieNight), btn('Add both to watchlist', 'btn-aqua sm', () => { pair.forEach((x) => { if (!inWatch('film', x.title)) toggleWatch(x, 'film'); }); renderGuide(); }), btn('Copy plan', 'btn-aqua sm', function () { copyText(plan, this); }), btn('Close', 'btn-aqua sm', closeOv));
+  const saved = () => pair.every((x) => inWatch('film', x.title));
+  const addBoth = btn(saved() ? 'Both on your watchlist \u2713' : 'Add both to watchlist', 'btn-aqua sm', () => {
+    pair.forEach((x) => { if (!inWatch('film', x.title)) toggleWatch(x, 'film'); }); renderGuide();
+    addBoth.textContent = 'Added to your watchlist \u2713'; addBoth.disabled = true; $('#g-wcount').classList.add('bump'); setTimeout(() => $('#g-wcount').classList.remove('bump'), 900);
+  });
+  addBoth.disabled = saved();
+  row.append(btn('Another pair', 'btn-aqua sm', movieNight), addBoth, btn('Copy plan', 'btn-aqua sm', function () { copyText(plan, this); }), btn('Close', 'btn-aqua sm', closeOv));
   bar.append(total, row); box.appendChild(bar);
 }
 function card(x, kind, isPick) {
@@ -1114,12 +1124,87 @@ function card(x, kind, isPick) {
   li.addEventListener('click', (e) => { if (!e.target.closest('button,a')) openTicket(x, kind); });
   return li;
 }
+/* Movie Night shelf: the watchlist as a video store shelf; pick boxes for tonight and get a plan with times */
+const fmtTime = (m) => { m = ((m % 1440) + 1440) % 1440; const h = Math.floor(m / 60), x = m % 60; return ((h % 12) || 12) + ':' + ('0' + x).slice(-2) + ' ' + (h < 12 ? 'AM' : 'PM'); };
+const fmtLen = (m) => Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
+const nightKey = (w) => w.kind + '|' + w.title;
+const rtOf = (w) => { if (w.kind !== 'film') return 30; const f = g.data.film && g.data.film.find((x) => x.title === w.title && (!w.y || x.y === w.y)); return f && f.rt ? f.rt : 0; };
+const MAX_NIGHT = 4, BREAK = 10;
+function nightPlan() {
+  const items = g.night.map((k) => g.watch.find((w) => nightKey(w) === k)).filter(Boolean); let t = g.at;
+  const rows = items.map((w, i) => { const rt = rtOf(w), len = rt || 100, row = {w, s: t, e: t + len, guess: !rt}; t += len + (i < items.length - 1 ? BREAK : 0); return row; });
+  return {rows, end: rows.length ? rows[rows.length - 1].e : g.at};
+}
+const nightLabel = () => DOWS[eraDow()] + ', ' + MONTHS[era.m - 1] + ' ' + era.d;
+function nightText() {
+  const pl = nightPlan(); if (!pl.rows.length) return '';
+  return 'Movie night, ' + nightLabel() + ', ' + era.y + '\n' + pl.rows.map((r) => fmtTime(r.s) + '  ' + r.w.title + (r.w.y ? ' (' + r.w.y + ')' : '') + (r.w.kind === 'film' ? ', ' + (r.guess ? 'about ' : '') + fmtLen(r.e - r.s) : ', one episode')).join('\n') + '\nLights up around ' + fmtTime(pl.end) + '.';
+}
+function printNight() {
+  const pl = nightPlan(); if (!pl.rows.length) return;
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const tickets = pl.rows.map((r, i) => '<div class="t"><div class="n">' + (i + 1) + '</div><div><h2>' + esc(r.w.title) + (r.w.y ? ' <small>(' + esc(r.w.y) + ')</small>' : '') + '</h2><p>' + fmtTime(r.s) + ' to ' + fmtTime(r.e) + (r.w.kind === 'film' ? ' &middot; ' + (r.guess ? 'about ' : '') + fmtLen(r.e - r.s) : ' &middot; one episode') + '</p></div><b>ADMIT ONE</b></div>').join('');
+  const html = '<!doctype html><meta charset="utf-8"><title>Movie night</title><style>body{font:16px Georgia,serif;margin:30px;color:#2b2112}h1{margin:0 0 4px;font-size:26px}.s{margin:0 0 18px;color:#6b5a38}.t{display:flex;align-items:center;gap:16px;border:2px dashed #8a6d2c;border-radius:10px;padding:14px 18px;margin:0 0 12px;background:#fbf6e6}.t h2{margin:0;font-size:20px}.t small{font-weight:400;color:#6b5a38}.t p{margin:4px 0 0;color:#6b5a38}.n{font:700 28px Georgia;width:42px;height:42px;border-radius:50%;background:#2b2112;color:#fbf6e6;display:grid;place-items:center}.t b{margin-left:auto;font:700 12px Helvetica,Arial,sans-serif;letter-spacing:2px;color:#a2352b}.f{margin-top:14px;font-style:italic}</style><h1>Movie night</h1><p class="s">' + esc(nightLabel()) + ', ' + era.y + '</p>' + tickets + '<p class="f">Lights up around ' + fmtTime(pl.end) + '. Get snacks.</p>';
+  const w = window.open('', '_blank');
+  if (!w) { copyText(nightText(), $('#g-count')); return; }
+  w.document.write(html); w.document.close(); w.focus(); setTimeout(() => w.print(), 300);
+}
+function saveNight() { store.set('tonight', g.night); store.set('tonightat', g.at); }
+function renderShelf() {
+  const box = $('#g-shelf'); box.innerHTML = '';
+  const E = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  g.night = g.night.filter((k) => g.watch.some((w) => nightKey(w) === k)); saveNight();
+  if (!g.data.film && !g.filmWait) { g.filmWait = true; guide('film').then((r) => { g.data.film = r; g.filmWait = false; buildFilters(); if (g.kind === 'watch' && g.view === 'shelf') renderShelf(); }, () => { g.filmWait = false; }); }
+  if (!g.watch.length) { box.appendChild(E('div', 'gempty', 'Your shelf is empty. Use + Watchlist on any movie or show, then come back to build a movie night.')); return; }
+  // tonight's bill
+  const tray = E('div', 'tonight'), head = E('div', 'tn-head'), pl = nightPlan();
+  head.append(E('b', null, "Tonight's bill"), E('span', null, nightLabel()));
+  const sel = E('select'); sel.setAttribute('aria-label', 'Start time');
+  for (let m = 1080; m <= 1380; m += 30) { const o = E('option', null, fmtTime(m)); o.value = String(m); if (m === g.at) o.selected = true; sel.appendChild(o); }
+  sel.onchange = () => { g.at = +sel.value; saveNight(); renderShelf(); };
+  const lab = E('label', null, 'Doors open '); lab.appendChild(sel); head.appendChild(lab); tray.appendChild(head);
+  if (!pl.rows.length) tray.appendChild(E('div', 'tn-hint', 'Click up to ' + MAX_NIGHT + ' boxes on the shelf to put them on tonight\'s bill, or let the shelf pick a double feature.'));
+  else {
+    const ol = E('ol', 'tn-list');
+    pl.rows.forEach((r, i) => {
+      const li = E('li'); li.append(E('time', null, fmtTime(r.s)), E('span', 'tn-t', r.w.title + (r.w.y ? ' (' + r.w.y + ')' : '')), E('small', null, r.w.kind === 'film' ? (r.guess ? 'about ' : '') + fmtLen(r.e - r.s) : 'one episode'));
+      ol.appendChild(li); if (i < pl.rows.length - 1) { const br = E('li', 'tn-break'); br.append(E('time', null, fmtTime(r.e)), E('span', null, 'Intermission, ' + BREAK + ' minutes. Get snacks.')); ol.appendChild(br); }
+    });
+    tray.append(ol, E('div', 'tn-end', 'Lights up around ' + fmtTime(pl.end) + '.'));
+  }
+  const row = E('div', 'tn-btns');
+  const surprise = btn('Surprise double', 'btn-aqua sm', () => {
+    const films = g.watch.filter((w) => w.kind === 'film'), pool = films.length >= 2 ? films : g.watch; if (pool.length < 2) { g.night = pool.map(nightKey); } else { const a = pool.slice().sort(() => Math.random() - .5).slice(0, 2); g.night = a.map(nightKey); }
+    saveNight(); renderShelf();
+  });
+  row.append(surprise);
+  if (pl.rows.length) row.append(btn('Copy plan', 'btn-aqua sm', function () { copyText(nightText(), this); }), btn('Print tickets', 'btn-aqua sm', printNight), btn('Clear', 'btn-aqua sm', () => { g.night = []; saveNight(); renderShelf(); }));
+  tray.appendChild(row); box.appendChild(tray);
+  // the shelf
+  const wood = E('div', 'shelfwood');
+  g.watch.forEach((w) => {
+    const x = itemOf(w), idx = g.night.indexOf(nightKey(w)), b = E('button', 'sbox' + (idx >= 0 ? ' on' : '')); b.type = 'button'; b.title = w.title + (w.y ? ' (' + w.y + ')' : '') + (idx >= 0 ? ' - on tonight\'s bill (click to take off)' : ' - click to add to tonight');
+    const p = poster(x, false); p.classList.add('sposter'); b.appendChild(p);
+    posterQ.push(() => about(x.title, x.y || x.y0, w.kind).then((a) => applyPoster(p, a), () => {})); pumpPosters();
+    if (idx >= 0) b.appendChild(E('span', 'sbadge', String(idx + 1)));
+    if (w.kind !== 'film') b.appendChild(E('span', 'stv', 'TV'));
+    const info = E('span', 'sinfo', 'i'); info.title = 'Details'; info.onclick = (e) => { e.stopPropagation(); openTicket(x, w.kind); }; b.appendChild(info);
+    b.onclick = () => { const k = nightKey(w), i = g.night.indexOf(k); if (i >= 0) g.night.splice(i, 1); else if (g.night.length < MAX_NIGHT) g.night.push(k); else { flashCount('Four is plenty for one night. Take one off first.'); return; } saveNight(); renderShelf(); };
+    wood.appendChild(b);
+  });
+  box.appendChild(wood);
+}
+const flashCount = (t) => { const c = $('#g-count'); const old = c.textContent; c.textContent = t; setTimeout(() => { if (c.textContent === t) c.textContent = old; }, 2200); };
+$$('#g-views button').forEach((b) => { b.onclick = () => { g.view = b.dataset.v; store.set('wview', g.view); renderGuide(); }; });
 function renderGuide() {
   const ul = $('#g-list'); ul.innerHTML = ''; const cnt = $('#g-count');
   $$('#g-tabs button').forEach((b) => b.classList.toggle('on', b.dataset.kind === g.kind));
   $('#g-filters').hidden = g.kind === 'watch'; $('#g-copy').hidden = g.kind !== 'watch'; $('#g-surprise').hidden = $('#g-night').hidden = g.kind === 'watch';
+  const shelf = g.kind === 'watch' && g.view === 'shelf'; $('#g-views').hidden = g.kind !== 'watch'; ul.hidden = shelf; $('#g-shelf').hidden = !shelf;
+  $$('#g-views button').forEach((b) => b.classList.toggle('on', b.dataset.v === g.view));
   if (g.kind === 'watch') {
-    cnt.textContent = g.watch.length ? g.watch.length + ' saved. Play them on your TV or wherever you like.' : 'Nothing saved yet. Use + Watchlist on any movie or show.';
+    cnt.textContent = g.watch.length ? g.watch.length + ' saved. ' + (shelf ? 'Pick boxes for tonight.' : 'Play them on your TV or wherever you like.') : 'Nothing saved yet. Use + Watchlist on any movie or show.';
+    if (shelf) { renderShelf(); return; }
     g.watch.forEach((w) => ul.appendChild(card(itemOf(w), w.kind, false)));
     return;
   }
@@ -1182,7 +1267,7 @@ function setEra(p, auto) {
   if (!$('#w-date').hidden) fillDateWin();
   if (typeof it.src === 'number' && it.src !== era.y) itYear(era.y);
   g.year = String(era.y); g.pick = null; if (g.kind !== 'watch' && g.data[g.kind]) buildFilters(); renderGuide();
-  cat.eraChanged();
+  cat.eraChanged(); tvg.eraChanged();
   syncWeb(); if (webHomeOn) webHome(true); else if (webLoaded) webGo(webUrl, true);
 }
 $('#dt-m').addEventListener('change', (e) => setEra({m: +e.target.value}));
@@ -1325,6 +1410,7 @@ const APPS = [
   ['QuickShow', () => openWin('w-qt')],
   ['Movie Guide', () => openWin('w-guide')],
   ['Mail', () => openWin('w-mail')],
+  ['TV Guide', () => { tvg.ensure(); openWin('w-tvg'); }],
   ['Catalog', () => { cat.ensure(); openWin('w-cat'); }],
   ['Arcade', () => { arcade.ensure(); openWin('w-arcade'); }],
   ['Sounds', () => openWin('w-sounds')],
@@ -1353,7 +1439,7 @@ const HELPS = {
   'Movie Guide': ['Movie Guide', [
     'A place to decide what to watch. Movies and TV shows from 1996 to 2005, most famous first, from Wikidata. It opens filtered to the year on your clock.',
     'Filter by year, genre and (for TV) network. Surprise me highlights a random pick from whatever you filtered, and Movie Night chooses a double feature with the total running time. Right-click a title for quick actions.',
-    'Click any title for its ticket: plot, poster, IMDb and where to watch. Save titles to the Watchlist and copy the list to take it to your TV. Play trailer and Play intro open the video in QuickShow. The guide does not stream movies or episodes.']],
+    'Click any title for its ticket: plot, poster, IMDb and where to watch. Save titles to the Watchlist and copy the list to take it to your TV. The Watchlist has a List view and a Shelf view: on the Shelf your saved titles stand in poster boxes, and clicking up to four of them puts them on the bill for the night, with a start time for each, a 10 minute intermission and when the lights come up. Pick when the doors open, let Surprise double choose for you, then copy the plan or print the tickets. Play trailer and Play intro open the video in QuickShow. The guide does not stream movies or episodes.']],
   'NIM': ['NIM', [
     'NIM is short for Nostalgia IM. Instant messages, a buddy list, public chat rooms and member profiles in one program, like the original. Sign on once, then click a buddy to message them, or press the chat button to join a room.',
     'There is no server: visitors connect straight to each other through WebRTC, found by public relays. The regulars on the list are bots, and they are labeled. They have profiles too. Away messages send an automatic reply.',
@@ -1374,8 +1460,12 @@ const HELPS = {
     'A small inbox. New mail arrives every 8 to 12 minutes while you use the computer (Settings lets you make it more or less often, or only when you press Get Mail). A chime plays, a voice announces "You\'ve got mail!" (read by your browser\'s own voice, so it sounds different on each computer), a mailbox pops up, and a red number on the dock icon shows how many are unread. Press Get Mail to check right away.',
     'The Postmaster sends a Daily Digest for the date on your clock: the number one song and movie, headlines and history, from the same sources as Old Web. The rest are chain letters, forwards and notes from the regulars on NIM. All of it is written for this site, and nothing is sent anywhere.',
     'Right-click a message to mark it unread or delete it. Your inbox is saved in this browser only.']],
+  'TV Guide': ['TV Guide', [
+    'The printed TV listings, the weekly magazine that sat on the coffee table. It opens the week on your clock: a page-by-page recreation of what ABC, CBS, NBC, Fox, UPN and The WB ran, with four pages for every day (6 in the morning to noon, noon to 6, 6 to midnight and midnight to 6) and the prime time hours in yellow. TV Guide weeks run from Saturday to Friday, like the real ones.',
+    'Library also holds the real thing: scans of actual TV Guide issues from 1997 to 2002, as many as survive online (only a handful from those years do). They are regional editions, and they cover their own week, so on the right dates one opens by itself. The ads, the cover stories and the listings are all there to flip through. These are the same flip, zoom and full screen controls as the Catalog: click the sides or use the arrow keys, + and - to zoom, and F for full screen.',
+    'The recreated pages come from Wikipedia, which keeps a schedule page for every TV season, and the real issues load from the Internet Archive, so a page can take a moment and everything needs an internet connection. Cable channels are not included, and a gap is local programming, which your local station picked.']],
   'Catalog': ['Catalog', [
-    'Scans of the real printed mail-order catalogs, the thick JCPenney and Sears books that came in the mail before online shopping. It opens the one that fits the date on your clock: the Christmas book in November and December, the Fall and Winter book from August, and the Spring and Summer book the rest of the year, whichever of those exists for that year. Library shows every catalog from that year.',
+    'Scans of the real printed mail-order catalogs, the thick JCPenney and Sears books that came in the mail before online shopping. It opens the book that fits the quarter on your clock: Spring and Summer from January to June, Fall and Winter from July to September, and the Christmas book from October to December, whichever of those exists for that year. Library shows every catalog from that year, in order, so you can look through the older ones too.',
     'Turn pages by clicking the left or right side of the book, dragging across it, using the arrow buttons or the left and right arrow keys. The Pages sidebar jumps anywhere, and typing a number in the box goes to that page. The + and - buttons (or the + and - keys, double-clicking a page, or Ctrl or Cmd with the scroll wheel or a pinch) zoom in and out, and you drag to look around. The button next to the zoom buttons (or the F key) shows just the book in true full screen, with no windows or menus, and Esc leaves it. The green button makes the window bigger. Your place in each catalog is remembered in this browser.',
     'Pages load from christmas.musetechnical.com, which keeps the scans online for anyone to look at, so a page can take a few seconds to arrive and the catalogs need an internet connection. Prices, phone numbers and offers are from the original books and nothing here can be ordered.']],
   'Arcade': ['Arcade', [
@@ -1402,6 +1492,7 @@ const ABOUTS = {
   'NIM': ['NIM', ['Nostalgia IM. Instant messages, chat rooms and profiles.', 'Part of Nostalgia Desktop.']],
   'TV': ['TV', ['An old TV with channels from the era.', 'Part of Nostalgia Desktop.']],
   'Mail': ['Mail', ['A small inbox with chain letters and a daily digest.', 'Part of Nostalgia Desktop.']],
+  'TV Guide': ['TV Guide', ['What the six broadcast networks ran, all day, for any date.', 'Part of Nostalgia Desktop.']],
   'Catalog': ['Catalog', ['Scans of the printed JCPenney and Sears catalogs of the year.', 'Part of Nostalgia Desktop.']],
   'Arcade': ['Arcade', ['Four small games made for this site.', 'Part of Nostalgia Desktop.']],
   'Old Web': ['Old Web', ['The web as it looked, from the Internet Archive.', 'Part of Nostalgia Desktop.']],
@@ -1458,7 +1549,7 @@ function sysItems() {
   [['random', 'Random']].concat(saverKeys.map((k) => [k, SAVERS[k].name])).forEach(([k, n]) => it2.push({t: (saverPick === k ? '✓ ' : ' ') + n, fn: () => { saverPick = k; store.set('saver', k); }}));
   it2.push({t: 'Start Screen Saver Now', fn: () => setTimeout(() => startSaver(saverPick === 'random' ? undefined : saverPick), 300)}, {sep: 1}, {t: fsEl() ? 'Exit Full Screen' : 'Enter Full Screen', dis: !fsOk(), fn: toggleFullscreen}, {t: soundOn ? 'Mute Sound' : 'Turn Sound On', fn: () => $('#snd').click()}, {sep: 1});
   if (signedIn) it2.push({t: 'Log Out ' + me + '...', fn: signOut});
-  it2.push({t: 'Restart...', fn: () => location.reload()}, {t: 'Shut Down...', fn: shutDown});
+  it2.push({t: 'Restart...', fn: () => { try { sessionStorage.setItem('nd-restart', '1'); } catch (e) { /* it just shows the power button */ } location.reload(); }}, {t: 'Shut Down...', fn: shutDown});
   return it2;
 }
 function appItems() {
@@ -1504,6 +1595,9 @@ function menusFor(app) {
     ['Bookmarks', () => SITES.map(([n, u, from]) => ({t: n, dis: era.y < from, fn: () => webGo(u)}))], win, help];
   if (app === 'Date & Time') return [['File', () => [close]], edit, win, help];
   if (app === 'Mail') return [['File', () => [{t: 'Get Mail', fn: () => mail.check(false)}, {sep: 1}, close]], edit, win, help];
+  if (app === 'TV Guide') return [
+    ['File', () => [{t: 'Library...', fn: () => tvg.library()}, {sep: 1}, close]], edit,
+    ['Go', () => [{t: 'Next Page', key: '\u2192', fn: () => tvg.turn(1)}, {t: 'Previous Page', key: '\u2190', fn: () => tvg.turn(-1)}, {sep: 1}, {t: 'First Page', fn: () => tvg.first()}, {t: 'Last Page', fn: () => tvg.last()}, {sep: 1}, {t: 'Full Screen', key: 'F', fn: () => tvg.fullscreen()}, {sep: 1}, {t: 'Zoom In', key: '+', fn: () => tvg.zoomIn()}, {t: 'Zoom Out', key: '-', fn: () => tvg.zoomOut()}, {t: 'Fit on Screen', key: '0', fn: () => tvg.zoomFit()}, {sep: 1}, {t: 'Show or Hide Pages Sidebar', fn: () => tvg.toggleSide()}]], win, help];
   if (app === 'Catalog') return [
     ['File', () => [{t: 'Library...', fn: () => cat.library()}, {sep: 1}, close]], edit,
     ['Go', () => [{t: 'Next Page', key: '\u2192', fn: () => cat.turn(1)}, {t: 'Previous Page', key: '\u2190', fn: () => cat.turn(-1)}, {sep: 1}, {t: 'First Page', fn: () => cat.first()}, {t: 'Last Page', fn: () => cat.last()}, {sep: 1}, {t: 'Full Screen', key: 'F', fn: () => cat.fullscreen()}, {sep: 1}, {t: 'Zoom In', key: '+', fn: () => cat.zoomIn()}, {t: 'Zoom Out', key: '-', fn: () => cat.zoomOut()}, {t: 'Fit on Screen', key: '0', fn: () => cat.zoomFit()}, {sep: 1}, {t: 'Show or Hide Pages Sidebar', fn: () => cat.toggleSide()}]], win, help];
@@ -1628,6 +1722,9 @@ function startBoot() {
   };
   $('#boot-run').onclick = finish;
   showPower();
+  // a restart starts the computer by itself, like a real one; only a fresh visit waits for the power button
+  let again = false; try { again = sessionStorage.getItem('nd-restart') === '1'; sessionStorage.removeItem('nd-restart'); } catch (e) { /* no session storage */ }
+  if (again) $('#boot-power').click();
 }
 
 /* ---------- screensaver: floating bubbles after two idle minutes (never while a video plays) ---------- */

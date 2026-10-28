@@ -628,7 +628,7 @@ body.bootin #menubar{animation:menuin .5s ease-out}
 .win.zoomed .body.cat{flex:1;height:auto}
 .bk-bar{display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #8a8a8a;background:linear-gradient(#f4f4f4,#d8d8d8)}
 .bk-title{flex:1;min-width:0;text-align:center;font:700 12px var(--ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#bk-go{width:54px;font:11px var(--ui);padding:1px 4px;border:1px solid #888;border-radius:10px;text-align:center}
+#w-cat .bk-bar input,#w-tvg .bk-bar input{width:54px;font:11px var(--ui);padding:1px 4px;border:1px solid #888;border-radius:10px;text-align:center}
 .bk-main{flex:1;min-height:0;display:flex}
 .bk-side{flex:0 0 96px;overflow:auto;background:#bdbdbd;border-right:1px solid #777;padding:8px 0}
 .noside .bk-side{display:none}
@@ -666,7 +666,7 @@ body.bootin #menubar{animation:menuin .5s ease-out}
 .bk-lb.on .bk-cv,.bk-lb:hover .bk-cv{outline:3px solid #5aa0ff}
 .bk-ln{font-weight:700}.bk-lp{opacity:.7}
 .bk-foot{display:flex;align-items:center;gap:10px;padding:5px 10px;border-top:1px solid #8a8a8a;background:linear-gradient(#e6e6e6,#cfcfcf)}
-#bk-where{flex:1;text-align:center;font:11px var(--ui);color:#333}
+#w-cat .bk-foot span,#w-tvg .bk-foot span{flex:1;text-align:center;font:11px var(--ui);color:#333}
 .win .body.cat .tstat a{color:#0f3e8c}
 .bk-stage:fullscreen{background:#000;overflow:auto}
 .bk-stage:-webkit-full-screen{background:#000;overflow:auto}
@@ -678,3 +678,37 @@ body.bootin #menubar{animation:menuin .5s ease-out}
 .bk-stage:not(.full) .bk-hint{display:none}
 
 body.bkfull #menubar,body.bkfull #dock,body.bkfull #mailpop{display:none!important}
+
+/* ---------- Movie Night shelf ---------- */
+.gviews{display:inline-flex;border:1px solid #14509f;border-radius:20px;overflow:hidden}
+.gviews button{border:0;background:#e7eefb;color:#14509f;font:700 11px var(--ui);padding:3px 11px;cursor:pointer}
+.gviews button.on{background:#2a6fd6;color:#fff}
+.gshelf{flex:1;min-height:0;overflow:auto;padding:0 12px 12px;display:flex;flex-direction:column;gap:12px}
+.gshelf[hidden]{display:none}
+.tonight{flex:none;background:#fbf6e6;color:#2b2112;border:2px dashed #8a6d2c;border-radius:10px;padding:10px 14px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.tn-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tn-head b{font:700 17px Georgia,serif}
+.tn-head span{color:#6b5a38;font-size:12px}
+.tn-head label{margin-left:auto;font-size:12px}
+.tn-hint{margin:8px 0;font:italic 12px Georgia,serif;color:#6b5a38}
+.tn-list{list-style:none;margin:8px 0 4px;padding:0;display:grid;gap:3px}
+.tn-list li{display:flex;gap:10px;align-items:baseline;font-size:13px}
+.tn-list time{flex:none;width:76px;font:700 12px var(--ui);color:#a2352b}
+.tn-t{font:700 14px Georgia,serif}
+.tn-list small{color:#6b5a38}
+.tn-break{color:#6b5a38;font-style:italic;font-size:12px}
+.tn-end{font:italic 12px Georgia,serif;color:#6b5a38}
+.tn-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.shelfwood{flex:none;display:grid;grid-template-columns:repeat(auto-fill,100px);grid-auto-rows:172px;gap:0 14px;justify-content:center;padding:0 14px;border-radius:6px;box-shadow:inset 0 5px 14px rgba(0,0,0,.65);background:repeating-linear-gradient(to bottom,#3a2312 0 156px,#7c4f25 156px 158px,#a8743b 158px 172px)}
+.sbox{position:relative;width:100px;height:144px;margin:12px 0 0;padding:0;border:0;background:none;cursor:pointer;transition:transform .15s}
+.sbox:hover{transform:translateY(-6px)}
+.sbox.on{transform:translateY(-14px)}
+.sbox .sposter{width:100px;height:144px;box-sizing:border-box;padding:6px;border-left:5px solid rgba(0,0,0,.55);border-radius:3px;box-shadow:3px 0 7px rgba(0,0,0,.55);text-align:left}
+.sbox .sposter b{font-size:12px}
+.sbox.on .sposter{outline:3px solid #ffe45e}
+.sbadge{position:absolute;top:-9px;right:-9px;width:26px;height:26px;border-radius:50%;background:#d4161c;color:#fff;font:800 14px var(--ui);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.7)}
+.stv{position:absolute;left:8px;top:8px;background:#111;color:#fff;font:700 10px var(--ui);padding:1px 5px;border-radius:3px}
+.sinfo{position:absolute;right:5px;bottom:5px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font:italic 700 13px Georgia,serif;display:none;place-items:center}
+.sbox:hover .sinfo{display:grid}
+#g-wcount.bump{display:inline-block;animation:wbump .9s ease-out}
+@keyframes wbump{0%{transform:scale(1);color:inherit}30%{transform:scale(1.8);color:#d4161c}100%{transform:scale(1)}}
