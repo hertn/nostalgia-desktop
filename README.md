@@ -1,12 +1,12 @@
-<p align="center"><img src="logo.svg" alt="Nostalgia Machine logo" width="128" height="128"></p>
+<p align="center"><img src="logo.svg" alt="Nostalgia Desktop logo" width="128" height="128"></p>
 
-<h1 align="center">Nostalgia Machine</h1>
+<h1 align="center">Nostalgia Desktop</h1>
 
 <p align="center"><b>A computer from 1996 to 2005, running in your browser.</b></p>
 
 Set the date and the machine fills with the real music, movies, TV shows and websites of that moment. It looks like an early-2000s Mac desktop, with a dock, a menu bar, a buddy list, a screen saver and a very slow modem. Everything in it is from 1996 to 2005, and nothing newer ever appears.
 
-**Live demo:** https://hertn.github.io/nostalgia-machine/
+**Live demo:** https://hertn.github.io/nostalgia-desktop/
 
 ## Screenshots
 
@@ -81,8 +81,8 @@ Visitors connect directly to each other with WebRTC, and [Trystero](https://gith
 
 ## Run it locally
 
-    git clone https://github.com/hertn/nostalgia-machine.git
-    cd nostalgia-machine
+    git clone https://github.com/hertn/nostalgia-desktop.git
+    cd nostalgia-desktop
     python3 -m http.server 8765
 
 Then open http://localhost:8765. YouTube embeds need `http(s)`, so opening `index.html` straight from disk will not play video. To see real chat, open two tabs and sign on to NIM with different names.

@@ -389,6 +389,8 @@ input[type=text],input[type=password],textarea,select{border:1px solid #7b7b7b;b
 .win.zoomed .body.qt{display:flex;flex-direction:column}
 .win.zoomed .qt .qtbox{aspect-ratio:auto;flex:1;min-height:0}
 /* TV */
+.tvshield{position:absolute;inset:0;z-index:2;background:transparent}
+.tvshield[hidden]{display:none}
 .tvstatic{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;image-rendering:pixelated;background:#888}
 .tvstatic[hidden],.osd[hidden],.osdname[hidden]{display:none}
 .osd{position:absolute;right:5%;top:6%;z-index:4;pointer-events:none;font:700 28px/1 "Courier New",monospace;color:#5cff5c;text-shadow:2px 2px 0 #000}
@@ -617,3 +619,5 @@ body.bootin #menubar{animation:menuin .5s ease-out}
 
 #about-body a{color:#1a4fb0}
 #about-body h3{margin:14px 0 2px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#4a5670}
+
+.tvin.nosig .yth{visibility:hidden}

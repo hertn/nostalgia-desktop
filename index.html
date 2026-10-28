@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nostalgia Machine</title>
+<title>Nostalgia Desktop</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
-<meta name="description" content="Nostalgia Machine: a 1996 to 2005 desktop with the real music charts, movies, TV shows and old websites of the era.">
+<meta name="description" content="Nostalgia Desktop: a 1996 to 2005 desktop with the real music charts, movies, TV shows and old websites of the era.">
 <link rel="stylesheet" href="css/style.css?v=78">
 </head>
 <body>
@@ -216,6 +216,7 @@
           <div class="tvscreen" id="box-tv">
             <div class="tvin" id="tv-in" hidden>
               <div class="yth" id="yt-tv"></div>
+              <div class="tvshield" id="tv-shield" hidden></div>
               <canvas class="tvstatic" id="tv-static" width="160" height="120" hidden></canvas>
               <div class="osd" id="tv-osd" hidden></div>
               <div class="osdname" id="tv-name" hidden></div>
@@ -278,14 +279,14 @@
 
   <!-- About (filled per app) -->
   <section class="win" id="w-about" data-app="Finder" style="left:380px;top:150px;width:400px" hidden>
-    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title" id="about-title">About Nostalgia Machine</div></div>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title" id="about-title">About Nostalgia Desktop</div></div>
     <div class="body about" id="about-body"></div>
   </section>
 
   <div id="spotlight" hidden><div class="spbox"><input type="text" id="sp-q" placeholder="Spotlight" aria-label="Spotlight search" autocomplete="off"><ul id="sp-res"></ul></div></div>
   <div id="boot" hidden>
-    <button id="boot-power" type="button" aria-label="Power on"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v8M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Click to power on</span><small>Nostalgia Machine</small></button>
-    <div id="boot-run" hidden><svg class="blogo" viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="bl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#1a5fd0"/></linearGradient><linearGradient id="bl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd5e2"/></linearGradient></defs><rect x="4" y="4" width="88" height="88" rx="21" fill="url(#bl1)" stroke="#124a9c"/><ellipse cx="48" cy="22" rx="36" ry="16" fill="#fff" opacity=".28"/><rect x="21" y="20" width="54" height="46" rx="8" fill="url(#bl2)" stroke="#5a6678"/><rect x="27" y="26" width="42" height="32" rx="4" fill="#12306c"/><rect x="36" y="35" width="5" height="8" rx="2" fill="#fff"/><rect x="55" y="35" width="5" height="8" rx="2" fill="#fff"/><path d="M36 49c4 6 20 6 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="40" y="66" width="16" height="6" fill="#b9c1ce"/><rect x="28" y="72" width="40" height="7" rx="3" fill="url(#bl2)" stroke="#5a6678"/></svg><div class="btitle">Nostalgia Machine</div><div class="bsub">Computers, music and TV from 1996 to 2005</div><div class="bbar"><i id="boot-fill"></i></div><div class="bmsg"><span class="bspin"></span><span id="boot-msg">Starting up...</span></div><div class="byears" id="boot-years"><span>'96</span><span>'97</span><span>'98</span><span>'99</span><span>'00</span><span>'01</span><span>'02</span><span>'03</span><span>'04</span><span>'05</span></div><div class="bfoot">Model 96-05</div></div>
+    <button id="boot-power" type="button" aria-label="Power on"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v8M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Click to power on</span><small>Nostalgia Desktop</small></button>
+    <div id="boot-run" hidden><svg class="blogo" viewBox="0 0 96 96" aria-hidden="true"><defs><linearGradient id="bl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ff"/><stop offset="1" stop-color="#1a5fd0"/></linearGradient><linearGradient id="bl2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cdd5e2"/></linearGradient></defs><rect x="4" y="4" width="88" height="88" rx="21" fill="url(#bl1)" stroke="#124a9c"/><ellipse cx="48" cy="22" rx="36" ry="16" fill="#fff" opacity=".28"/><rect x="21" y="20" width="54" height="46" rx="8" fill="url(#bl2)" stroke="#5a6678"/><rect x="27" y="26" width="42" height="32" rx="4" fill="#12306c"/><rect x="36" y="35" width="5" height="8" rx="2" fill="#fff"/><rect x="55" y="35" width="5" height="8" rx="2" fill="#fff"/><path d="M36 49c4 6 20 6 24 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><rect x="40" y="66" width="16" height="6" fill="#b9c1ce"/><rect x="28" y="72" width="40" height="7" rx="3" fill="url(#bl2)" stroke="#5a6678"/></svg><div class="btitle">Nostalgia Desktop</div><div class="bsub">Computers, music and TV from 1996 to 2005</div><div class="bbar"><i id="boot-fill"></i></div><div class="bmsg"><span class="bspin"></span><span id="boot-msg">Starting up...</span></div><div class="byears" id="boot-years"><span>'96</span><span>'97</span><span>'98</span><span>'99</span><span>'00</span><span>'01</span><span>'02</span><span>'03</span><span>'04</span><span>'05</span></div><div class="bfoot">Model 96-05</div></div>
   </div>
   <div id="shut" hidden><div class="shutin"><span class="bspin big"></span><div>Shutting down...</div></div></div>
   <canvas id="saver" hidden></canvas>

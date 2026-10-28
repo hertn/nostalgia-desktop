@@ -69,12 +69,12 @@ const BAD = /lyric|cover|reaction|remix|karaoke|tutorial|sped up|slowed|8d|night
 // returns video items [{id,title,by,dur}] best first
 export async function searchVideos(q, o) {
   o = o || {};
-  const key = 'q:' + q + ':' + (o.max || 0), hit = cache.get(key, 7 * DAY); if (hit) return hit;
+  const key = 'q2:' + q + ':' + (o.max || 0), hit = cache.get(key, 7 * DAY); if (hit) return hit;
   let lastErr = null;
   for (const base of PIPED) {
     try {
       const d = await getJSON(base + '/search?filter=videos&q=' + encodeURIComponent(q), 9000);
-      const items = (d.items || []).filter((x) => x.type === 'stream' && x.duration > 20 && (!o.max || x.duration <= o.max) && /v=([\w-]{11})/.test(x.url || ''))
+      const items = (d.items || []).filter((x) => x.type === 'stream' && x.duration > 20 && !(x.uploaded > Date.now() + 36e5) && (!o.max || x.duration <= o.max) && /v=([\w-]{11})/.test(x.url || ''))
         .map((x) => ({id: x.url.match(/v=([\w-]{11})/)[1], title: x.title || '', by: x.uploaderName || '', dur: x.duration, verified: !!x.uploaderVerified}));
       if (!items.length) continue;
       const yr = (x) => { const m = x.title.match(/\b(19|20)\d\d\b/); return m ? +m[0] : 0; };

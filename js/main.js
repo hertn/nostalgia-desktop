@@ -1,9 +1,9 @@
-// Nostalgia Machine: a 1996 to 2005 desktop with peer-to-peer chat (Trystero over public relays, no server or accounts).
+// Nostalgia Desktop: a 1996 to 2005 desktop with peer-to-peer chat (Trystero over public relays, no server or accounts).
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
 import {mountArcade} from './arcade.js?v=78';
 import {mountMail} from './mail.js?v=78';
 import {SAVERS} from './savers.js?v=78';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=78';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=80';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -327,9 +327,9 @@ function iconAct(el, fn) {
   el.addEventListener('dblclick', fn); el.addEventListener('keydown', (e) => { if (e.key === 'Enter') fn(); });
 }
 iconAct($('#ic-cd'), () => openWin('w-utunes'));
-iconAct($('#ic-hd'), () => openAbout('Nostalgia Machine'));
+iconAct($('#ic-hd'), () => openAbout('Nostalgia Desktop'));
 $('#ic-cd')._ctx = () => [{t: 'Open', fn: () => openWin('w-utunes')}];
-$('#ic-hd')._ctx = () => [{t: 'Open', fn: () => openAbout('Nostalgia Machine')}];
+$('#ic-hd')._ctx = () => [{t: 'Open', fn: () => openAbout('Nostalgia Desktop')}];
 
 /* ---------- chat windows (shared by bots and people) ---------- */
 const copyPlain = (t) => { try { navigator.clipboard.writeText(t).catch(() => {}); } catch (x) { /* ignore */ } };
@@ -611,7 +611,7 @@ class Tube {
   async play(ids) {
     this.ids = ids; this.k = 0; await loadYT(); if (!window.YT || !window.YT.Player) return false;
     this.box.classList.add('live');
-    if (!this.p) this.make(ids[0], 'https://www.youtube-nocookie.com'); else this.p.loadVideoById(ids[0]);
+    if (!this.p) this.make(ids[0], 'https://www.youtube-nocookie.com'); else this.p.loadVideoById(ids[0]); this.guard();
     return true;
   }
   // a blocked frame (content blocker, strict privacy mode) never reports an error, so wait for onReady and retry on the other host
@@ -624,13 +624,16 @@ class Tube {
       else { this.box.classList.remove('live'); this.o.fail('blocked', this.ids[this.k]); }
     }, 7000);
     this.p = new YT.Player(d, {width: '100%', height: '100%', videoId: id, host, playerVars: Object.assign({playsinline: 1, rel: 0, autoplay: 1}, /^https?:/.test(location.origin) ? {origin: location.origin} : {}), events: {
-      onReady: (e) => { this.ready = true; clearTimeout(this.wd); e.target.playVideo(); },
-      onStateChange: (e) => { this.playing = e.data === 1; this.o.state(e.data); },
-      onError: (e) => { this.ready = true; clearTimeout(this.wd); this.k++; if (this.k < this.ids.length) this.p.loadVideoById(this.ids[this.k]); else this.o.fail(e.data, this.ids[this.ids.length - 1]); }
+      onReady: (e) => { this.ready = true; clearTimeout(this.wd); e.target.playVideo(); this.guard(); },
+      onStateChange: (e) => { this.playing = e.data === 1; if (e.data === 1) clearTimeout(this.sk); this.o.state(e.data); },
+      onError: (e) => { this.ready = true; clearTimeout(this.wd); this.next(e.data); }
     }});
   }
+  next(code) { this.k++; if (this.k < this.ids.length) this.p.loadVideoById(this.ids[this.k]); else this.o.fail(code, this.ids[this.ids.length - 1]); this.guard(); }
+  // a video that never starts (an upcoming premiere, say) is skipped like an error
+  guard() { clearTimeout(this.sk); if (!this.o.skipStuck) return; this.sk = setTimeout(() => { if (!this.playing) this.next('stuck'); }, 12000); }
   toggle() { if (!this.p) return false; try { if (this.playing) this.p.pauseVideo(); else this.p.playVideo(); } catch (e) { return false; } return true; }
-  stop() { try { if (this.p) this.p.stopVideo(); } catch (e) { /* player not ready */ } this.playing = false; clearTimeout(this.wd); }
+  stop() { try { if (this.p) this.p.stopVideo(); } catch (e) { /* player not ready */ } this.playing = false; clearTimeout(this.wd); clearTimeout(this.sk); }
   pause() { try { if (this.p && this.playing) this.p.pauseVideo(); } catch (e) { /* player not ready */ } }
   time() { try { return this.p.getCurrentTime() || 0; } catch (e) { return 0; } }
   length() { try { return this.p.getDuration() || 0; } catch (e) { return 0; } }
@@ -814,7 +817,7 @@ async function surfPick(x) {
 }
 // era channels: news, commercials and cartoons from the year on the Date & Time clock
 const SPECIALS = {
-  news: {name: 'Evening News', qs: (y) => ['NBC Nightly News ' + y, 'ABC World News Tonight ' + y, 'CBS Evening News ' + y, 'CNN ' + y + ' news'], need: /news/i, min: 240, skip: /9\/11|sept(ember|\.)? ?11|attack|terror|crash|shooting|massacre|funeral|disaster|war\b|bomb|explosion|retro tech/i},
+  news: {name: 'News', qs: (y) => ['NBC Nightly News ' + y, 'ABC World News Tonight ' + y, 'CBS Evening News ' + y, 'CNN ' + y + ' news'], need: /news/i, min: 240, skip: /9\/11|sept(ember|\.)? ?11|attack|terror|crash|shooting|massacre|funeral|disaster|war\b|bomb|explosion|retro tech/i},
   ads: {name: 'Commercial Break', qs: (y) => [y + ' tv commercials', y + ' commercials compilation', 'commercials from ' + y], need: /commercial|\bads?\b/i, min: 90},
   toons: {name: 'Saturday Morning Cartoons', qs: (y) => ['saturday morning cartoons ' + y, y + ' cartoons full episode'], need: /cartoon|saturday morning/i, min: 240}
 };
@@ -866,16 +869,19 @@ async function qtOpen(o) {
 }
 
 /* TV: an old set in the dock. Channels 1 to 69 are TV shows from 1996 to 2005; the lineup stays the same on every visit. */
-const tv = {on: false, ch: 3, rows: null, tok: 0, fails: 0, fresh: false, vol: 100, ad: false};
+const tv = {on: false, ch: Math.min(69, Math.max(1, store.get('tvch', 1) | 0)), rows: null, tok: 0, fails: 0, fresh: false, vol: 100, ad: false};
 const tubeTv = new Tube($('#yt-tv'), $('#box-tv'), {
+  skipStuck: true,
   state(s) {
-    if (s === 1) { tv.fails = 0; tvStatic(false); tvOsd('CH ' + pad2(tv.ch), 3000); const n = $('#tv-name'); n.hidden = false; setTimeout(() => { n.hidden = true; }, 3000); }
+    if (s === 1) { tv.fails = 0; $('#tv-in').classList.remove('nosig'); tvStatic(false); tvShield(); tvOsd('CH ' + pad2(tv.ch), 3000); const n = $('#tv-name'); n.hidden = false; setTimeout(() => { n.hidden = true; }, 3000); }
     // like flipping channels: land somewhere in the middle of the show, not at the start
     if (s === 1 && tv.fresh) { tv.fresh = false; setTimeout(() => { const d = tubeTv.length(); if (d > 240) tubeTv.seek(d * (.12 + Math.random() * .6)); }, 600); }
-    if (s === 0 && tv.on) { if (tv.ad || Math.random() < .5) { tv.ad = false; tvTune(nextCh(1)); } else tvBreak(); }
+    if (s === 0 && tv.on && tvSpecial() === 'news') tvTune(tv.ch);
+    else if (s === 0 && tv.on) { if (tv.ad || Math.random() < .5) { tv.ad = false; tvTune(nextCh(1)); } else tvBreak(); }
   },
-  fail(code, id) { tvStatic(false); note($('#tv-stat'), errText(code), watchUrl(id)); if (tv.on && ++tv.fails < 3) setTimeout(() => { if (tv.on) tvTune(nextCh(1)); }, 2500); }
+  fail(code, id) { tvNoSignal(); note($('#tv-stat'), code === 'stuck' ? 'Nothing is playing on this channel right now.' : errText(code), watchUrl(id)); if (tv.on && tvSpecial() !== 'news' && ++tv.fails < 3) setTimeout(() => { if (tv.on) tvTune(nextCh(1)); }, 2500); }
 });
+const tvSpecial = () => !tv.ad && tv.rows && tv.rows[tv.ch - 1] && tv.rows[tv.ch - 1].special;
 const nextCh = (d) => ((tv.ch - 1 + d + 69) % 69) + 1;
 let staticT = 0, staticOff = 0, statSince = 0, osdT = 0;
 const statCv = $('#tv-static'), statCx = statCv.getContext('2d');
@@ -895,6 +901,11 @@ function tvStatic(on) {
   if (statCv.hidden) return;
   staticOff = setTimeout(() => { clearInterval(staticT); statCv.hidden = true; }, Math.max(0, 900 - (Date.now() - statSince)));
 }
+// the YouTube frame is cross-origin, so we can't tap it. A shield over it makes the frame see the pointer leave, and YouTube hides its UI
+let shieldT = 0;
+function tvShield() { const h = $('#tv-shield'); h.hidden = false; clearTimeout(shieldT); shieldT = setTimeout(() => { h.hidden = true; }, 3500); }
+// nothing to show: plain static instead of the last frame
+function tvNoSignal() { tubeTv.stop(); $('#tv-in').classList.add('nosig'); tvStatic(true); clearTimeout(staticOff); }
 function tvOsd(text, ms) { const o = $('#tv-osd'); o.textContent = text; o.hidden = false; clearTimeout(osdT); osdT = setTimeout(() => { o.hidden = true; }, ms); }
 function seeded(seed) { return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 async function tvLineup() {
@@ -904,21 +915,21 @@ async function tvLineup() {
   const rnd = seeded(seed), a = g.data.tv.slice(0, 150);
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   tv.rows = a.slice(0, 69);
-  [[3, 'news'], [6, 'ads'], [10, 'toons']].forEach(([i, k]) => { tv.rows[i] = {title: SPECIALS[k].name, special: k}; });
+  [[0, 'news'], [6, 'ads'], [10, 'toons']].forEach(([i, k]) => { tv.rows[i] = {title: SPECIALS[k].name, special: k}; });
   return tv.rows;
 }
 async function tvTune(ch) {
   if (!tv.on) return;
-  const tok = ++tv.tok; tv.ch = ch; $('#tv-chnum').textContent = pad2(ch); $('#tv-name').hidden = true; $('#tv-osd').hidden = true;
+  const tok = ++tv.tok; tv.ch = ch; store.set('tvch', ch); $('#tv-chnum').textContent = pad2(ch); $('#tv-name').hidden = true; $('#tv-osd').hidden = true;
   tvStatic(true); sfx('static'); tubeTv.pause(); $('#tv-stat').textContent = 'Changing channel...';
-  let rows; try { rows = await tvLineup(); } catch (e) { tvStatic(false); $('#tv-stat').textContent = "Couldn't load the TV lineup. Check your connection."; return; }
+  let rows; try { rows = await tvLineup(); } catch (e) { tvNoSignal(); $('#tv-stat').textContent = "Couldn't load the TV lineup. Check your connection."; return; }
   const x = rows[ch - 1]; if (!x) return;
-  tv.ad = false; let pick; try { pick = x.special ? await specialPick(x.special) : await surfPick(x); } catch (e) { if (tok === tv.tok) { tvStatic(false); note($('#tv-stat'), "Couldn't reach the video search.", youtubeSearchUrl(x.title)); } return; }
+  tv.ad = false; let pick; try { pick = x.special ? await specialPick(x.special) : await surfPick(x); } catch (e) { if (tok === tv.tok) { tvNoSignal(); note($('#tv-stat'), "Couldn't reach the video search.", youtubeSearchUrl(x.title)); } return; }
   if (tok !== tv.tok || !tv.on) return;
-  if (!pick.ids.length) { tvStatic(false); note($('#tv-stat'), 'Nothing is on this channel right now.', youtubeSearchUrl(x.title + (x.special ? ' ' + era.y : ''))); return; }
+  if (!pick.ids.length) { tvNoSignal(); note($('#tv-stat'), 'Nothing is on this channel right now.', youtubeSearchUrl(x.title + (x.special ? ' ' + era.y : ''))); return; }
   const label = pick.label || x.title; tv.fresh = pick.long; $('#tv-name').textContent = label; $('#tv-stat').textContent = 'CH ' + pad2(ch) + '  ' + label + (x.nets && x.nets[0] ? '  (' + x.nets[0] + ')' : '');
-  if (!(await tubeTv.play(pick.ids))) note($('#tv-stat'), "Couldn't load YouTube.", youtubeSearchUrl(x.title));
-  setTimeout(() => { if (tok === tv.tok) tvStatic(false); }, 3500);
+  if (!(await tubeTv.play(pick.ids))) { tvNoSignal(); note($('#tv-stat'), "Couldn't load YouTube.", youtubeSearchUrl(x.title)); return; }
+  setTimeout(() => { if (tok === tv.tok && !$('#tv-in').classList.contains('nosig')) tvStatic(false); }, 3500);
 }
 // a show ended: commercials from the era, then the next channel
 async function tvBreak() {
@@ -936,7 +947,7 @@ function tvPower(on) {
   const inn = $('#tv-in'); $('#tv-pow').classList.toggle('on', on);
   if (on) { inn.hidden = false; inn.classList.remove('going'); inn.classList.add('warm'); sfx('static'); $('#tv-stat').textContent = 'Warming up...'; tvStatic(true); setTimeout(() => tvTune(tv.ch), 600); }
   else {
-    tubeTv.stop(); tvStatic(false); $('#tv-osd').hidden = true; $('#tv-name').hidden = true; inn.classList.remove('warm'); inn.classList.add('going');
+    tubeTv.stop(); tvStatic(false); $('#tv-shield').hidden = true; $('#tv-osd').hidden = true; $('#tv-name').hidden = true; inn.classList.remove('warm'); inn.classList.add('going');
     setTimeout(() => { if (!tv.on) { inn.hidden = true; statCv.hidden = true; clearInterval(staticT); } }, 450);
     $('#tv-chnum').textContent = '--'; $('#tv-stat').textContent = 'Press the power button.';
   }
@@ -1261,7 +1272,7 @@ function drawToday(box, r) {
   if (past.length) tile('b', 'hist', 'History', 'On This Day', lines(past, ''));
   if (r.photo) { const a = el('a'); a.href = r.photo.page; a.target = '_blank'; a.rel = 'noopener'; const im = el('img'); im.src = r.photo.url; im.alt = r.photo.caption; a.appendChild(im); tile('c', 'photo', 'Photo', 'Picture of the Day', a, el('small', 'wh-cap', r.photo.caption)); }
   if (!tiles.length) tile('b', 'news', '', 'Not Much Here', el('p', '', 'The archives have little for this exact day. Try another date, or visit a site below.'));
-  const top = el('div', 'wh-top'); top.append(el('span', 'wh-brand', 'Nostalgia Machine'), el('span', 'wh-date', DOWS[eraDow()] + ', ' + MONTHS[era.m - 1] + ' ' + era.d + ', ' + era.y));
+  const top = el('div', 'wh-top'); top.append(el('span', 'wh-brand', 'Nostalgia Desktop'), el('span', 'wh-date', DOWS[eraDow()] + ', ' + MONTHS[era.m - 1] + ' ' + era.d + ', ' + era.y));
   const nav = el('div', 'wh-nav'); tiles.forEach(([ic, label, x]) => { if (!label) return; const b = btn('', '', () => x.scrollIntoView({behavior: 'smooth', block: 'start'})); b.title = label; b.setAttribute('aria-label', label); b.appendChild(whIcon(ic)); b.appendChild(document.createTextNode(label)); nav.appendChild(b); });
   const sites = el('div', 'wh-sites'); sites.appendChild(whIcon('web')); SITES.forEach(([n, u, from]) => { if (era.y >= from) sites.appendChild(btn(n, 'linkbtn', () => webGo(u))); });
   const grid = el('div', 'wh-grid'); grid.append(cols.a, cols.b, cols.c);
@@ -1314,7 +1325,7 @@ const appWins = (name) => $$('.win').filter((w) => w.dataset.app === name && (!w
 
 // the how-to text for each app, opened from its Help menu
 const HELPS = {
-  'Nostalgia Machine': ['Nostalgia Machine', [
+  'Nostalgia Desktop': ['Nostalgia Desktop', [
     'A desktop from 1996 to 2005, with the real music, movies, TV shows and websites of the time. It starts on today\'s month and day in 2005. Click the clock to travel to any other date.',
     'Apps in the dock: Old Web (a browser), NIM (buddy list, chat rooms and profiles), uTunes (music charts), Movie Guide (what to watch), TV (an old TV with channels), QuickShow (video player), Arcade (small games), Mail and Sounds. The Read Me drive on the right is this window.',
     'Handy things: the screen saver (System menu) has four looks, Old Web dials in the first time you open it, right-click almost anything for a menu, drag dock icons to reorder them, press the green button to maximize a window, and use Enter Full Screen in the System menu to hide the browser around it.']],
@@ -1337,7 +1348,7 @@ const HELPS = {
     'Press the person button to edit your profile: mood, about text, color and a profile song. Others see it when they choose View Profile on your name, and it exists only while you are online. Anyone can join and nothing is moderated. Do not share personal details, and use Block in any chat.']],
   'TV': ['TV', [
     'An old TV in your dock. Press the power button, then flip channels with the up and down buttons, or the arrow keys while the TV is selected. Volume has its own buttons.',
-    'Most of channels 1 to 69 are TV shows from 1996 to 2005, in a lineup that stays the same on every visit. There is also an evening news channel, a commercials channel and Saturday morning cartoons. The news looks for a broadcast from the exact date on your clock, then that month, then that year.',
+    'Most of channels 1 to 69 are TV shows from 1996 to 2005, in a lineup that stays the same on every visit. There is also a news channel, a commercials channel and Saturday morning cartoons. The news looks for a broadcast from the exact date on your clock, then that month, then that year.',
     'The TV finds a full episode or a scene on YouTube and drops you into the middle of it. When a show ends you may get a commercial break before the next channel. Videos about a show, like reactions and reviews, are filtered out, but titles are all it can go by, so a few may slip through.']],
   'Old Web': ['Old Web', [
     'A browser for the old web. It opens on an On This Day page for the date on your clock: headlines, the number one song and movie, new releases, what was on TV and a picture of the day, from Wikipedia and Wikimedia Commons. Home brings you back to it.',
@@ -1359,28 +1370,28 @@ const HELPS = {
     'The links under Hear the originals open YouTube in a new tab.']]
 };
 const ABOUTS = {
-  'Nostalgia Machine': ['Nostalgia Machine', [
+  'Nostalgia Desktop': ['Nostalgia Desktop', [
     'Model 96-05',
     '## What it is',
     'A computer from 1996 to 2005 that runs in your browser. Set the date and it fills with the real music, movies, TV shows and websites of that time.',
     '## Why it exists',
     'For anyone who misses the early internet. It is a time capsule to look around in, a place to find something to watch or listen to, and a way to chat with other people who remember.',
     '## Who made it',
-    'Built by Claude, an AI made by Anthropic, and directed by Hert Niks. The code is open source: https://github.com/hertn/nostalgia-machine',
+    'Built by Claude, an AI made by Anthropic, and directed by Hert Niks. The code is open source: https://github.com/hertn/nostalgia-desktop',
     'A fan tribute, not connected to any company or service. Content is looked up live from Wikipedia, Wikidata, Wikimedia Commons, YouTube and the Internet Archive.']],
-  'uTunes': ['uTunes', ['Music from the Billboard year-end charts, 1996 to 2005.', 'Part of Nostalgia Machine.']],
-  'QuickShow': ['QuickShow', ['A small video player for trailers and TV openings.', 'Part of Nostalgia Machine.']],
-  'Movie Guide': ['Movie Guide', ['Movies and TV shows from 1996 to 2005.', 'Part of Nostalgia Machine.']],
-  'NIM': ['NIM', ['Nostalgia IM. Instant messages, chat rooms and profiles.', 'Part of Nostalgia Machine.']],
-  'TV': ['TV', ['An old TV with channels from the era.', 'Part of Nostalgia Machine.']],
-  'Mail': ['Mail', ['A small inbox with chain letters and a daily digest.', 'Part of Nostalgia Machine.']],
-  'Arcade': ['Arcade', ['Four small games made for this site.', 'Part of Nostalgia Machine.']],
-  'Old Web': ['Old Web', ['The web as it looked, from the Internet Archive.', 'Part of Nostalgia Machine.']],
-  'Date & Time': ['Date & Time', ['Set the clock anywhere from 1996 to 2005.', 'Part of Nostalgia Machine.']],
-  'Sounds': ['Sounds', ['Choose the sounds the computer makes.', 'Part of Nostalgia Machine.']]
+  'uTunes': ['uTunes', ['Music from the Billboard year-end charts, 1996 to 2005.', 'Part of Nostalgia Desktop.']],
+  'QuickShow': ['QuickShow', ['A small video player for trailers and TV openings.', 'Part of Nostalgia Desktop.']],
+  'Movie Guide': ['Movie Guide', ['Movies and TV shows from 1996 to 2005.', 'Part of Nostalgia Desktop.']],
+  'NIM': ['NIM', ['Nostalgia IM. Instant messages, chat rooms and profiles.', 'Part of Nostalgia Desktop.']],
+  'TV': ['TV', ['An old TV with channels from the era.', 'Part of Nostalgia Desktop.']],
+  'Mail': ['Mail', ['A small inbox with chain letters and a daily digest.', 'Part of Nostalgia Desktop.']],
+  'Arcade': ['Arcade', ['Four small games made for this site.', 'Part of Nostalgia Desktop.']],
+  'Old Web': ['Old Web', ['The web as it looked, from the Internet Archive.', 'Part of Nostalgia Desktop.']],
+  'Date & Time': ['Date & Time', ['Set the clock anywhere from 1996 to 2005.', 'Part of Nostalgia Desktop.']],
+  'Sounds': ['Sounds', ['Choose the sounds the computer makes.', 'Part of Nostalgia Desktop.']]
 };
 function fillAbout(app, help) {
-  const a = (help ? HELPS : ABOUTS)[app] || ABOUTS['Nostalgia Machine'], body = $('#about-body'); body.innerHTML = '';
+  const a = (help ? HELPS : ABOUTS)[app] || ABOUTS['Nostalgia Desktop'], body = $('#about-body'); body.innerHTML = '';
   const h = document.createElement('h2'); h.textContent = a[0]; body.appendChild(h);
   a[1].forEach((t) => {
     if (t.indexOf('## ') === 0) { const h3 = document.createElement('h3'); h3.textContent = t.slice(3); body.appendChild(h3); return; }
@@ -1391,7 +1402,7 @@ function fillAbout(app, help) {
   });
   $('#about-title').textContent = help ? a[0] + ' Help' : 'About ' + a[0];
 }
-function openAbout(app, help) { const key = ABOUTS[app] ? app : 'Nostalgia Machine'; fillAbout(key, help); const w = $('#w-about'); w.dataset.app = key === 'Nostalgia Machine' ? 'Finder' : key; openWin(w); }
+function openAbout(app, help) { const key = ABOUTS[app] ? app : 'Nostalgia Desktop'; fillAbout(key, help); const w = $('#w-about'); w.dataset.app = key === 'Nostalgia Desktop' ? 'Finder' : key; openWin(w); }
 
 function signOut() {
   if (!signedIn) return;
@@ -1423,7 +1434,7 @@ function toggleFullscreen() {
 }
 function sysItems() {
   const cur = desk.dataset.wall;
-  const it2 = [{t: 'About Nostalgia Machine', fn: () => openAbout('Nostalgia Machine')}, {t: 'Date & Time...', fn: openDate}, {sep: 1}, {t: 'Desktop Color', dis: true}];
+  const it2 = [{t: 'About Nostalgia Desktop', fn: () => openAbout('Nostalgia Desktop')}, {t: 'Date & Time...', fn: openDate}, {sep: 1}, {t: 'Desktop Color', dis: true}];
   WALLS.forEach(([k, n]) => it2.push({t: (cur === k ? '✓ ' : ' ') + n, fn: () => setWall(k)}));
   it2.push({sep: 1}, {t: 'Screen Saver', dis: true});
   [['random', 'Random']].concat(saverKeys.map((k) => [k, SAVERS[k].name])).forEach(([k, n]) => it2.push({t: (saverPick === k ? '✓ ' : ' ') + n, fn: () => { saverPick = k; store.set('saver', k); }}));
@@ -1434,7 +1445,7 @@ function sysItems() {
 }
 function appItems() {
   const app = $('#appname').textContent, has = app !== 'Finder';
-  return [{t: 'About ' + (has ? app : 'Nostalgia Machine'), fn: () => openAbout(has ? app : 'Nostalgia Machine')}, {sep: 1}, {t: 'Hide ' + app, dis: !has, fn: () => appWins(app).forEach((w) => { w.hidden = true; w._mini = true; syncDock(); })}, {t: 'Quit ' + app, dis: !has, fn: () => appWins(app).forEach((w) => closeWin(w))}];
+  return [{t: 'About ' + (has ? app : 'Nostalgia Desktop'), fn: () => openAbout(has ? app : 'Nostalgia Desktop')}, {sep: 1}, {t: 'Hide ' + app, dis: !has, fn: () => appWins(app).forEach((w) => { w.hidden = true; w._mini = true; syncDock(); })}, {t: 'Quit ' + app, dis: !has, fn: () => appWins(app).forEach((w) => closeWin(w))}];
 }
 function editItems() {
   const el = document.activeElement, field = el && /^(INPUT|TEXTAREA)$/.test(el.tagName);
@@ -1451,7 +1462,7 @@ function menusFor(app) {
   const act = activeWin();
   const close = {t: 'Close Window', key: '⌘W', dis: !act, fn: () => act && closeWin(act)};
   const edit = ['Edit', editItems], win = ['Window', windowItems];
-  const aboutKey = app === 'Finder' ? 'Nostalgia Machine' : app;
+  const aboutKey = app === 'Finder' ? 'Nostalgia Desktop' : app;
   const help = ['Help', () => [{t: aboutKey + ' Help', fn: () => openAbout(aboutKey, true)}, {t: 'Search...', fn: openSpot}]];
   if (app === 'uTunes') return [
     ['File', () => [{t: 'Add to My Playlist', fn: () => $('#it-add').click()}, {t: 'Copy My Playlist', dis: !it.mine.length, fn: () => $('#it-copy').click()}, {sep: 1}, close]], edit,
@@ -1512,7 +1523,7 @@ function renderMenubar() {
 $('#sysmenu')._items = sysItems; $('#appname')._items = appItems; wireMenuButton($('#sysmenu')); wireMenuButton($('#appname'));
 document.addEventListener('pointerdown', (e) => { if (openBtn && !e.target.closest('#menu') && !e.target.closest('#menubar .mi')) closeMenu(); });
 $('#sysmenu').classList.add('orb');
-fillAbout('Nostalgia Machine'); renderMenubar();
+fillAbout('Nostalgia Desktop'); renderMenubar();
 
 /* right-click: an element offers its own menu through a _ctx function; windows, fields and the desktop have defaults */
 const ctxEl = document.createElement('div'); ctxEl.id = 'ctx'; ctxEl.hidden = true; ctxEl.setAttribute('role', 'menu'); desk.appendChild(ctxEl);
@@ -1524,7 +1535,7 @@ function winItems(w) { return [{t: 'Minimize', fn: () => $('.l.min', w).click()}
 function deskItems() {
   const cur = desk.dataset.wall, it2 = [{t: 'Desktop Color', dis: true}];
   WALLS.forEach(([k, n]) => it2.push({t: (cur === k ? '✓ ' : ' ') + n, fn: () => setWall(k)}));
-  return it2.concat([{sep: 1}, {t: 'Date & Time...', fn: openDate}, {t: fsEl() ? 'Exit Full Screen' : 'Enter Full Screen', dis: !fsOk(), fn: toggleFullscreen}, {t: soundOn ? 'Mute Sound' : 'Turn Sound On', fn: () => $('#snd').click()}, {sep: 1}, {t: 'About Nostalgia Machine', fn: () => openAbout('Nostalgia Machine')}]);
+  return it2.concat([{sep: 1}, {t: 'Date & Time...', fn: openDate}, {t: fsEl() ? 'Exit Full Screen' : 'Enter Full Screen', dis: !fsOk(), fn: toggleFullscreen}, {t: soundOn ? 'Mute Sound' : 'Turn Sound On', fn: () => $('#snd').click()}, {sep: 1}, {t: 'About Nostalgia Desktop', fn: () => openAbout('Nostalgia Desktop')}]);
 }
 function fieldItems(f) {
   let a = 0, b = 0; try { a = f.selectionStart; b = f.selectionEnd; } catch (x) { /* some types have no selection */ }
@@ -1563,7 +1574,7 @@ addEventListener('resize', closeCtx); addEventListener('blur', closeCtx);
 const spot = $('#spotlight'), spq = $('#sp-q'), spr = $('#sp-res');
 function spotRender() {
   const q = spq.value.trim().toLowerCase(), raw = spq.value.trim(); spr.innerHTML = ''; const res = [];
-  APPS.concat([['Read Me', () => openAbout('Nostalgia Machine')]]).forEach(([n, fn]) => { if (!q || n.toLowerCase().indexOf(q) >= 0) res.push({t: n, s: 'Application', fn}); });
+  APPS.concat([['Read Me', () => openAbout('Nostalgia Desktop')]]).forEach(([n, fn]) => { if (!q || n.toLowerCase().indexOf(q) >= 0) res.push({t: n, s: 'Application', fn}); });
   if (q) {
     res.push({t: 'Search the charts for "' + raw + '"', s: 'uTunes', fn: () => { openWin('w-utunes'); $('#it-q').value = raw; itSearch(); }});
     res.push({t: 'Filter the Movie Guide for "' + raw + '"', s: 'Movie Guide', fn: () => { openWin('w-guide'); $('#g-q').value = raw; g.q = q; g.pick = null; renderGuide(); }});
