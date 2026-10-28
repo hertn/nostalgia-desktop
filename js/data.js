@@ -91,6 +91,37 @@ export async function searchVideos(q, o) {
   throw lastErr || new Error('No search service answered');
 }
 
+// Internet Archive: recorded TV, commercials and cartoons. Search and metadata allow cross-origin reads; the files stream with Range requests.
+const IA = 'https://archive.org/';
+export async function iaSearch(q, rows) {
+  const key = 'ia1:' + q + ':' + (rows || 30), hit = cache.get(key, 7 * DAY); if (hit) return hit;
+  const d = await getJSON(IA + 'advancedsearch.php?q=' + encodeURIComponent(q) + '&fl[]=identifier&fl[]=title&fl[]=year&sort[]=' + encodeURIComponent('downloads desc') + '&rows=' + (rows || 30) + '&output=json', 12000);
+  const out = ((d.response && d.response.docs) || []).map((x) => ({id: x.identifier, title: String(x.title || ''), year: +x.year || 0}));
+  cache.set(key, out); return out;
+}
+// playable video files of one item: [{src, alt, len}], len in seconds. src goes straight to the item's data server (no redirect hop);
+// alt is the archive.org address that finds the server itself, for when an item has moved
+// The Archive writes streaming copies of uploads (index first, so they start at once). An uploader's own "MPEG4" file often keeps its
+// index at the end and can't start for seconds, and may not even be H.264, so only the streaming copies are used. Lower rank = better:
+// the standard copy first (every one checked started at once).
+const STREAMABLE = {'h.264': 1, 'h.264 IA': 2, '512Kb MPEG4': 3, 'h.264 HD': 4};
+export async function iaClips(id) {
+  const key = 'iaf5:' + id; let m = cache.get(key, 3 * DAY);
+  if (!m) {
+    const d = await getJSON(IA + 'metadata/' + encodeURIComponent(id), 15000);
+    const secs = (l) => { const p = String(l || '').split(':').map(Number); return p.some(isNaN) ? 0 : p.reduce((a, n) => a * 60 + n, 0); };
+    const best = {};
+    (d.files || []).forEach((x) => {
+      const r = STREAMABLE[x.format]; if (!r || !/\.(mp4|m4v)$/i.test(x.name) || secs(x.length) < 5) return;
+      const b = x.name.replace(/(_512kb|\.ia|_hd)?\.(mp4|m4v)$/i, ''); if (!best[b] || r < best[b].r) best[b] = {r, x};
+    });
+    m = {h: d.d1 && d.dir ? 'https://' + d.d1 + d.dir : '', l: Object.keys(best).slice(0, 80).map((k) => ({n: best[k].x.name, l: Math.round(secs(best[k].x.length))}))};
+    cache.set(key, m);
+  }
+  const base = IA + 'download/' + encodeURIComponent(id) + '/';
+  return m.l.map((x) => { const p = x.n.split('/').map(encodeURIComponent).join('/'); return {src: (m.h ? m.h + '/' + p : base + p), alt: base + p, len: x.l}; });
+}
+
 // YouTube answers oEmbed with 401 when the owner blocks embedding; network trouble counts as "maybe fine"
 async function embeddable(id) {
   const k = 'emb:' + id, hit = cache.get(k, 14 * DAY); if (hit !== null) return hit === 1;

@@ -5,7 +5,7 @@ import {mountMail} from './mail.js?v=78';
 import {mountCatalog} from './catalog.js?v=94';
 import {guideSource} from './tvguide.js?v=6';
 import {SAVERS} from './savers.js?v=78';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, tvSchedule, catalogThumbs, SCANS_SITE} from './data.js?v=85';
+import {YEARS, topSongs, guide, about, searchVideos, iaSearch, iaClips, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, tvSchedule, catalogThumbs, SCANS_SITE} from './data.js?v=90';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -646,9 +646,72 @@ class Tube {
   seek(t) { try { this.p.seekTo(t, true); } catch (e) { /* ignore */ } }
   volume(v) { try { this.p.setVolume(v); } catch (e) { /* ignore */ } }
 }
-function note(el, text, url) {
+// The TV's other player: Internet Archive recordings in plain video elements, with the calls Tube has.
+// Three elements take turns: one shows while the others hold the next channels already loaded, so a switch is nearly instant.
+// items are {src, alt}: alternates when one fails, or a run of clips played back to back when seq is set (a commercial break).
+const SILENT = 'data:audio/wav;base64,UklGRmYDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgATElTVBoAAABJTkZPSVNGVA0AAABMYXZmNjMuNS4xMDEAAGRhdGEgAwAAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=';
+class Reel {
+  constructor(host, o) {
+    this.host = host; this.o = o; this.items = []; this.k = 0; this.seq = false; this.fresh = false; this.playing = false; this.said = false; this.unlocked = false;
+    this.vs = [0, 1, 2].map(() => this.make()); this.v = this.vs[0]; this.show(this.v);
+  }
+  make() {
+    const v = document.createElement('video'); v.playsInline = true; v.preload = 'auto'; v.className = 'off'; this.host.appendChild(v);
+    const cur = () => v === this.v && !v._silent;
+    v.addEventListener('loadedmetadata', () => {
+      // land in the middle of the show: seek before playing, so the first picture is already from there
+      if (v._pend && isFinite(v.duration) && v.duration > 240) v.currentTime = v.duration * (.12 + Math.random() * .6);
+      v._pend = false; if (cur() && !this.playing) this.arm(6000);
+    });
+    v.addEventListener('playing', () => { if (!cur()) return; this.playing = true; clearTimeout(this.sk); if (!this.said) { this.said = true; this.o.state(1); } this.ahead(); });
+    v.addEventListener('pause', () => { if (cur() && !v.ended) this.playing = false; });
+    v.addEventListener('ended', () => { if (!cur()) return; this.playing = false; if (this.seq && this.k + 1 < this.items.length) { this.k++; this.start(this.items[this.k], false); } else this.o.state(0); });
+    v.addEventListener('error', () => { if (cur()) this.fail(); else if (!v._silent) v._key = ''; });
+    return v;
+  }
+  show(v) { this.vs.forEach((x) => x.classList.toggle('off', x !== v)); }
+  // a browser lets a video element make sound only after a click or key press has started it once, so each of the three is started on a silent clip then
+  unlock() {
+    if (this.unlocked) return; this.unlocked = true;
+    this.vs.forEach((v) => { if (v._key) return; v._silent = true; v.src = SILENT; const p = v.play(); if (p) p.catch(() => { this.unlocked = false; }); });
+  }
+  release(v) { v._key = ''; v._hold = false; v._pend = false; v._silent = false; v._retried = false; v.pause(); v.removeAttribute('src'); v.load(); }
+  free(not) {
+    const o = this.vs.filter((x) => x !== not);
+    return o.find((x) => !x._key) || o.filter((x) => !x._hold).sort((a, b) => (a._t || 0) - (b._t || 0))[0] || o[0];
+  }
+  setup(v, it, fresh) { v._silent = false; v._key = it.src; v._pend = !!fresh; v._retried = false; v._t = Date.now(); v.src = it.src; }
+  // load an item without showing it
+  stage(it, fresh) { if (!it) return null; const had = this.vs.find((x) => x._key === it.src); if (had) return had; const v = this.free(this.v); if (v._key) this.release(v); this.setup(v, it, fresh); return v; }
+  // the next clip of a run is loaded while the one before it plays, and kept safe from being replaced by a channel's preload
+  ahead() { if (this.seq && this.k + 1 < this.items.length) { const v = this.stage(this.items[this.k + 1], false); if (v) v._hold = true; } }
+  start(it, fresh) {
+    const old = this.v; let v = this.vs.find((x) => x !== old && x._key === it.src);
+    if (!v) { v = this.free(old); if (v._key) this.release(v); this.setup(v, it, fresh); }
+    v._hold = false; this.v = v; this.show(v); if (old !== v) this.release(old);
+    this.playing = false; v.muted = false; v.volume = this.o.vol() / 100; this.arm(5000);
+    const go = v.play(); if (go) go.catch((e) => { if (e.name === 'NotAllowedError') { v.muted = true; v.play().catch(() => {}); } });
+  }
+  async play(items, seq, fresh) { this.items = items; this.k = 0; this.seq = !!seq; this.fresh = !!fresh && !seq; this.said = false; this.start(items[0], this.fresh); return true; }
+  arm(ms) { clearTimeout(this.sk); this.sk = setTimeout(() => { if (!this.playing) this.fail(); }, ms); }
+  // this file won't play: the same file by the archive.org address, then the next item
+  fail() {
+    clearTimeout(this.sk); const it = this.items[this.k]; if (!it) return;
+    if (it.alt && it.alt !== it.src && !this.v._retried) { this.items[this.k] = {src: it.alt, alt: it.alt}; this.start(this.items[this.k], this.fresh); this.v._retried = true; return; }
+    this.o.bad(it.alt || it.src);
+    if (++this.k < this.items.length) this.start(this.items[this.k], this.fresh && !this.seq); else this.o.fail('ia', it.alt || it.src);
+  }
+  stop() { clearTimeout(this.sk); this.playing = false; this.release(this.v); }
+  stopAll() { this.stop(); this.vs.forEach((v) => this.release(v)); }
+  pause() { if (this.playing) this.v.pause(); }
+  time() { return this.v.currentTime || 0; }
+  length() { return isFinite(this.v.duration) ? this.v.duration : 0; }
+  seek(t) { try { this.v.currentTime = t; } catch (e) { /* not seekable yet */ } }
+  volume(n) { this.vs.forEach((v) => { v.volume = n / 100; }); }
+}
+function note(el, text, url, label) {
   el.textContent = text;
-  if (url) { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = ' Open on YouTube'; el.appendChild(a); }
+  if (url) { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = label || ' Open on YouTube'; el.appendChild(a); }
 }
 const ERRS = {2: 'YouTube says that video link is invalid.', 5: 'Your browser had trouble with the video player.', 100: 'That video was removed or is private.', 101: "The owner doesn't allow that video on other sites.", 150: "The owner doesn't allow that video on other sites.", 153: "YouTube couldn't verify this page (no referrer)."};
 const errText = (c) => c === 'blocked' ? "The video frame didn't load or crashed (a blocker, or the browser's video decoder)." : (ERRS[c] || 'YouTube error ' + c + '.') + ' (code ' + c + ')';
@@ -802,25 +865,11 @@ const tubeQt = new Tube($('#yt-qt'), $('#box-qt'), {
   state(s) { setIco($('#qt-ico'), s === 1); },
   fail(code, id) { note($('#qt-stat'), errText(code), watchUrl(id)); }
 });
-const plain = (t) => t.toLowerCase().replace(/[^a-z0-9 ]/g, '');
 // titles of people talking about a show instead of the show itself
 const NOT_SHOW = /react|review|recap|explain|analy|ranking|ranked|top \d+|top ten|theor|discuss|podcast|talk|interview|behind the scenes|breakdown|easter egg|things you|facts|reddit|tier list|worst|best of|every |meme|parody|spoof|tribute|\bmy \b|\bwhy\b|\bhow\b|what if|history of|documentary|retrospective|reunion|trailer|blooper|gag reel|fan.?made|audio only|rewatch|watching|watch party|livestream|live stream|commentary|opinion|\b20(0[6-9]|[1-9]\d)\b|season \d+ (rank|review)|did you know|mention|references?\b|you missed|vs\.? |kid reacts|first time/i;
 // only English-language, US-style results: no accented or non-Latin titles, no common French, Spanish or German news words
-const NOT_EN = /[\u00C0-\u024F\u0370-\u1FFF\u3000-\uFFFF]|journal|t[ée]l[ée]|actualit|infos?\b|\b(le|les|des|du|une|aux|el|los|las|der|die|das)\b|noticias|nachrichten|tagesschau|telegiornale|bbc arabic|en vivo|en directo|fran[cç]ais|espa[nñ]ol|deutsch|\b(itv|itn|bbc|sky news|perth|sydney|melbourne|brisbane|adelaide|seven nightly|seven news|nine news|ten news|cbc|ctv|tvnz|rte|zdf|tf1|rai|toronto|london|australia|uk|canada)\b/i;
+const NOT_EN = /[\u00C0-\u024F\u0370-\u1FFF\u3000-\uFFFF]|journal|t[ée]l[ée]|actualit|infos?\b|\b(le|les|des|du|une|aux|el|los|las|der|die|das)\b|noticias|nachrichten|tagesschau|telegiornale|bbc arabic|en vivo|en directo|fran[cç]ais|espa[nñ]ol|deutsch|\b(von|und|wie|mit|avec|pour|dans|para)\b|\b(itv|itn|bbc|sky news|perth|sydney|melbourne|brisbane|adelaide|seven nightly|seven news|nine news|ten news|cbc|ctv|tvnz|rte|zdf|tf1|rai|toronto|london|australia|uk|canada)\b/i;
 const bad = (t) => NOT_SHOW.test(t) || NOT_EN.test(t);
-const isEpisode = /full episode|episode \d|\bs\d+ ?e\d+|season \d+ episode|complete episode/i;
-// prefer a real episode or scene (so the TV can drop in mid-show), and fall back to the opening theme
-async function surfPick(x) {
-  const name = plain(x.title), ok = (v) => plain(v.title).indexOf(name) >= 0 && !bad(v.title);
-  for (const [q, min, need] of [[x.title + ' full episode', 480, true], [x.title + ' scene', 100, false]]) {
-    try {
-      const r = (await searchVideos(q, {max: 2400})).filter((v) => v.dur >= min && ok(v) && (!need || isEpisode.test(v.title)));
-      if (r.length) { r.sort(() => Math.random() - .5); return {ids: r.map((v) => v.id), long: true}; }
-    } catch (e) { /* try the next kind of clip */ }
-  }
-  const th = (await searchVideos(x.title + ' tv show opening theme', {max: 360})).filter(ok);
-  return {ids: th.map((v) => v.id), long: false};
-}
 // era channels: news, commercials and cartoons from the year on the Date & Time clock
 const SPECIALS = {
   news: {name: 'News', qs: (y) => ['NBC Nightly News ' + y, 'ABC World News Tonight ' + y, 'CBS Evening News ' + y, 'CNN ' + y + ' news'], need: /news/i, min: 240, skip: /9\/11|sept(ember|\.)? ?11|attack|terror|crash|shooting|massacre|funeral|disaster|war\b|bomb|explosion|retro tech/i},
@@ -856,6 +905,101 @@ async function specialPick(kind) {
   }
   return {ids: [], long: false, label: sp.name + ' ' + y};
 }
+// Internet Archive first: real recordings of the era (VHS tapes of whole broadcasts, commercial reels, news). YouTube covers what it lacks.
+const shuf = (a) => a.slice().sort(() => Math.random() - .5);
+// files that would not start are remembered, so a channel never picks them again
+const iaBad = new Set(store.get('iabad', []));
+function iaMarkBad(u) { iaBad.add(u); iaBad.add('item:' + u.split('/')[4]); store.set('iabad', Array.from(iaBad).slice(-300)); }
+const NOT_CUT = /clip|scene|opening|intro|theme|promo|trailer|credits|bumper|preview|sample|reaction|remix|oral history|completa|temporada|latino|dubbed|doblaje|orgasm|sex|erotic|adult|swimsuit|nude|porn|xxx|playboy|lingerie|strip|bikini|gameplay|walkthrough|playstation|xbox|dreamcast|nintendo|software|tutorial|menus?\b|wavefront|habsburg/i;
+// September 2001 from the 11th on is attack coverage; no channel lands on it, as with the YouTube search
+const IA_NEWS_SKIP = /9\/11|anniversary weekend|sept(ember|\.)? (1[1-9]|2\d|30),? 2001/i;
+const trim = (t) => t.length > 64 ? t.slice(0, 62) + '...' : t;
+// a run of 30 second spots played back to back, or one long recording to drop into
+async function iaFromItems(items, o) {
+  const cand = shuf(items.filter((it) => !IA_NEWS_SKIP.test(it.title) && !iaBad.has('item:' + it.id))).slice(0, 3), got = await Promise.all(cand.map((it) => iaClips(it.id).catch(() => null)));
+  for (let i = 0; i < cand.length; i++) {
+    const it = cand[i]; let c = got[i]; if (!c) continue;
+    c = c.filter((x) => !iaBad.has(x.alt) && !NOT_EN.test(decodeURIComponent(x.alt.split('/').pop())));
+    const spots = c.filter((x) => x.len <= 130), long = c.filter((x) => x.len >= o.min);
+    if (o.spots && spots.length >= 4) return {ia: shuf(spots).slice(0, 5).map((x) => ({src: x.src, alt: x.alt})), seq: true, long: false, label: o.label};
+    if (long.length) return {ia: shuf(long).slice(0, 5).map((x) => ({src: x.src, alt: x.alt})), long: o.long !== false, label: o.label || trim(it.title)};
+  }
+  return null;
+}
+async function iaSpecial(kind) {
+  const y = era.y;
+  if (kind === 'ads') {
+    const r = (await iaSearch('mediatype:movies AND year:' + y + ' AND (title:commercials OR title:commercial OR title:promos OR title:bumps)', 30)).filter((v) => /commercial|promo|bump/i.test(v.title) && !/web|internet|online|radio|software|wizard|how to/i.test(v.title) && !bad(v.title));
+    return iaFromItems(r, {min: 300, spots: true, label: SPECIALS.ads.name + ' ' + y});
+  }
+  if (kind === 'toons') {
+    const r = (await iaSearch('mediatype:movies AND year:' + y + ' AND (title:"saturday morning" OR subject:"saturday morning" OR title:cartoons)', 30)).filter((v) => /cartoon|saturday morning|kids.? ?wb|fox kids|nickelodeon|abc/i.test(v.title) && !/news/i.test(v.title) && !bad(v.title));
+    return iaFromItems(r, {min: 600, label: SPECIALS.toons.name + ' ' + y});
+  }
+  // news: the day on the clock, then the month, then the year
+  const {m, d} = era, mon = MONTHS[m - 1], sk = SPECIALS.news.skip, last = new Date(y, m, 0).getDate();
+  const span = (a, b) => 'date:[' + y + '-' + pad2(m) + '-' + pad2(a) + 'T00:00:00Z TO ' + y + '-' + pad2(m) + '-' + pad2(b) + 'T23:59:59Z]';
+  const base = ' AND (title:"nightly news" OR title:"evening news" OR title:"world news")';
+  for (const [q, label, long] of [[span(d, d), mon + ' ' + d + ', ' + y, false], [span(1, last), mon + ' ' + y, true], ['year:' + y, String(y), true]]) {
+    const r = (await iaSearch('mediatype:movies AND ' + q + base, 30)).filter((v) => !sk.test(v.title) && !IA_NEWS_SKIP.test(v.title) && !bad(v.title));
+    const p = r.length && await iaFromItems(r, {min: 600, long, label: SPECIALS.news.name + ' ' + label});
+    if (p) return p;
+  }
+  return null;
+}
+// A themed channel draws on its own pool of recordings: the clock's year first, then the years next to it, then any year of the era.
+async function iaCategory(x) {
+  const terms = x.q.map((t) => 'title:' + t).join(' OR '), y = era.y;
+  for (const [a, b] of [[y, y], [Math.max(1996, y - 1), Math.min(2005, y + 1)], [1996, 2005]]) {
+    const r = (await iaSearch('mediatype:movies AND year:[' + a + ' TO ' + b + '] AND (' + terms + ')', 60)).filter((v) => !bad(v.title) && !NOT_CUT.test(v.title) && !/commercial|nightly/i.test(v.title) && !(x.not && x.not.test(v.title)));
+    const p = r.length && await iaFromItems(r, {min: 900});
+    if (p) return p;
+  }
+  return null;
+}
+const iaPickFor = async (x) => { try { return x.special ? await iaSpecial(x.special) : await iaCategory(x); } catch (e) { return null; } /* the Archive didn't answer */ };
+const tvPick = async (x) => (await iaPickFor(x)) || (x.special ? specialPick(x.special) : {ids: []});
+// A channel's recording is settled once per clock date, then remembered: tuning back finds the same thing, the next channels can be prepared
+// while you watch, and the next visit needs no searching at all.
+let tvPicks = {day: '', m: new Map(), done: {}}, tvSaveT = 0;
+function tvPicksFor() {
+  const day = era.y + '-' + era.m + '-' + era.d;
+  if (tvPicks.day !== day) {
+    tvPicks = {day, m: new Map(), done: {}};
+    const o = store.get('tvpicks3', null);
+    if (o && o.day === day && Date.now() - o.t < 2 * 864e5) Object.keys(o.p).forEach((k) => { tvPicks.done[k] = o.p[k]; tvPicks.m.set(+k, Promise.resolve(o.p[k])); });
+  }
+  return tvPicks;
+}
+function tvIaPick(ch) {
+  const t = tvPicksFor(); if (t.m.has(ch)) return t.m.get(ch);
+  const pr = (async () => {
+    const x = (await tvLineup())[ch - 1]; const r = x ? await iaPickFor(x) : null;
+    if (r && tvPicks === t) {
+      t.done[ch] = {ia: r.ia.slice(0, 3), seq: r.seq, long: r.long, label: r.label};
+      clearTimeout(tvSaveT); tvSaveT = setTimeout(() => store.set('tvpicks3', {day: t.day, t: Date.now(), p: t.done}), 2000);
+    } else t.m.delete(ch);
+    return r;
+  })();
+  t.m.set(ch, pr); return pr;
+}
+function tvForget(ch) {
+  const t = tvPicksFor(); t.m.delete(ch); delete t.done[ch];
+  store.set('tvpicks3', {day: t.day, t: Date.now(), p: t.done});
+}
+// get the picks ready, nearest channels first, two at a time
+let warmTok = 0;
+function tvWarm(center) {
+  const tok = ++warmTok, order = [center];
+  for (let d = 1; d <= CH_N / 2; d++) order.push(((center - 1 + d) % CH_N) + 1, (((center - 1 - d) % CH_N) + CH_N) % CH_N + 1);
+  const list = order.filter((c, i) => order.indexOf(c) === i); let i = 0;
+  const run = async () => { while (i < list.length && tok === warmTok && (tv.on || !$('#w-tv').hidden)) { await tvIaPick(list[i++]).catch(() => null); await new Promise((r) => setTimeout(r, 250)); } };
+  run(); run();
+}
+// once a channel plays, load the two next to it so channel up and down switch at once
+function tvStageNear() {
+  [1, -1].forEach((d) => { const ch = nextCh(d); tvIaPick(ch).then((p) => { if (p && p.ia && tv.on && nextCh(d) === ch) reel.stage(p.ia[0], p.long && !p.seq); }).catch(() => {}); });
+}
 let qtDrag = false;
 setInterval(() => {
   if (!tubeQt.p || !tubeQt.playing || qtDrag) return;
@@ -874,21 +1018,46 @@ async function qtOpen(o) {
   if (!(await tubeQt.play(o.ids))) note($('#qt-stat'), "Couldn't load YouTube.", youtubeSearchUrl(o.query));
 }
 
-/* TV: an old set in the dock. Channels 1 to 69 are TV shows from 1996 to 2005; the lineup stays the same on every visit. */
-const tv = {on: false, ch: Math.min(69, Math.max(1, store.get('tvch', 1) | 0)), rows: null, tok: 0, fails: 0, fresh: false, vol: 100, ad: false};
-const tubeTv = new Tube($('#yt-tv'), $('#box-tv'), {
+/* TV: an old set in the dock with ten channels. Each draws on its own pool of recordings from the Internet Archive, for the year on the clock. */
+const CHANNELS = [
+  {title: SPECIALS.news.name, special: 'news'},
+  {title: SPECIALS.toons.name, special: 'toons'},
+  {title: SPECIALS.ads.name, special: 'ads'},
+  {title: 'Kids TV', q: ['nickelodeon', '"nick jr"', '"nick at nite"', '"disney channel"', '"pbs kids"', '"sesame street"', 'rugrats', 'arthur', '"bill nye"']},
+  {title: 'Toon Block', q: ['toonami', '"cartoon network"', 'pokemon', '"dragon ball"', 'digimon', 'spongebob', '"fox kids"', '"kids wb"', '"jimmy neutron"']},
+  {title: 'Sitcoms', not: /thomas|tank engine|oscar and|and friends|& friends|friends of/i, q: ['seinfeld', 'friends', 'frasier', '"will & grace"', '"everybody loves raymond"', '"home improvement"', '"king of queens"', '"that 70s show"', '"malcolm in the middle"', '"drew carey"', '"spin city"', '"just shoot me"', 'sabrina', '"boy meets world"', 'simpsons', '"king of the hill"', 'futurama', 'tgif']},
+  {title: 'Dramas', q: ['"law & order"', '"chicago hope"', 'csi', 'buffy', '"dawson\'s creek"', '"the practice"', '"x-files"', '"ally mcbeal"', '"west wing"', 'sopranos', '"six feet under"', 'charmed', 'smallville', 'roswell', '"gilmore girls"', '"7th heaven"', '"nypd blue"', '"judging amy"']},
+  {title: 'Late Night', q: ['letterman', '"tonight show"', 'conan', '"jay leno"', 'oprah', 'regis', '"daily show"', '"saturday night live"', 'kimmel', 'kilborn']},
+  {title: 'Music TV', q: ['mtv', 'vh1', '"total request live"', '"music video"', '"behind the music"', '"mtv cribs"', '"top of the pops"']},
+  {title: 'Sports & Movies', q: ['"super bowl"', 'nba', 'nfl', 'mlb', '"world series"', '"stanley cup"', 'olympics', 'hbo', '"movie of the week"', '"movie premiere"']}];
+const CH_N = CHANNELS.length;
+const tv = {on: false, ch: Math.min(CH_N, Math.max(1, store.get('tvch', 1) | 0)), rows: null, tok: 0, fails: 0, fresh: false, vol: 100, ad: false};
+const tvEv = {
   skipStuck: true,
   state(s) {
-    if (s === 1) { tv.fails = 0; $('#tv-in').classList.remove('nosig'); tvStatic(false); tvShield(); tvOsd('CH ' + pad2(tv.ch), 3000); const n = $('#tv-name'); n.hidden = false; setTimeout(() => { n.hidden = true; }, 3000); }
+    if (s === 1) { tvStageNear(); tv.fails = 0; tv.retried = 0; $('#tv-in').classList.remove('nosig'); tvStatic(false); tvShield(); tvOsd('CH ' + pad2(tv.ch), 3000); const n = $('#tv-name'); n.hidden = false; setTimeout(() => { n.hidden = true; }, 3000); }
     // like flipping channels: land somewhere in the middle of the show, not at the start
-    if (s === 1 && tv.fresh) { tv.fresh = false; setTimeout(() => { const d = tubeTv.length(); if (d > 240) tubeTv.seek(d * (.12 + Math.random() * .6)); }, 600); }
-    if (s === 0 && tv.on && tvSpecial() === 'news') tvTune(tv.ch);
+    if (s === 1 && tv.fresh && tvp === tubeTv) { tv.fresh = false; setTimeout(() => { const d = tvp.length(); if (d > 240) tvp.seek(d * (.12 + Math.random() * .6)); }, 600); }
+    if (s === 0 && tv.on && (tvSpecial() === 'news' || tvSpecial() === 'ads')) { tvForget(tv.ch); tvTune(tv.ch); }
     else if (s === 0 && tv.on) { if (tv.ad || Math.random() < .5) { tv.ad = false; tvTune(nextCh(1)); } else tvBreak(); }
   },
-  fail(code, id) { tvNoSignal(); note($('#tv-stat'), code === 'stuck' ? 'Nothing is playing on this channel right now.' : errText(code), watchUrl(id)); if (tv.on && tvSpecial() !== 'news' && ++tv.fails < 3) setTimeout(() => { if (tv.on) tvTune(nextCh(1)); }, 2500); }
-});
+  vol: () => tv.vol,
+  bad: (u) => iaMarkBad(u),
+  fail(code, id) {
+    // nothing on this channel would start: forget what it picked and choose again, once
+    if (code === 'ia' && tv.on && !tv.ad && tv.retried !== tv.ch) { tv.retried = tv.ch; tvForget(tv.ch); tvTune(tv.ch); return; }
+    tvNoSignal(); if (code === 'ia') note($('#tv-stat'), "Couldn't load that recording from the Internet Archive.", id, ' Open the file'); else note($('#tv-stat'), code === 'stuck' ? 'Nothing is playing on this channel right now.' : errText(code), watchUrl(id)); if (tv.on && tvSpecial() !== 'news' && ++tv.fails < 3) setTimeout(() => { if (tv.on) tvTune(nextCh(1)); }, 2500); }
+};
+const tubeTv = new Tube($('#yt-tv'), $('#box-tv'), tvEv), reel = new Reel($('#ia-tv'), tvEv);
+let tvp = tubeTv;
+// show one player's picture and silence the other
+function tvUse(p) {
+  if (p !== tvp) tvp.stop();
+  tvp = p; $('#yt-tv').hidden = p !== tubeTv; $('#ia-tv').classList.toggle('idle', p !== reel);
+}
+const tvPlay = (pick) => pick.ia ? (tvUse(reel), reel.play(pick.ia, pick.seq, pick.long)) : (tvUse(tubeTv), tubeTv.play(pick.ids));
 const tvSpecial = () => !tv.ad && tv.rows && tv.rows[tv.ch - 1] && tv.rows[tv.ch - 1].special;
-const nextCh = (d) => ((tv.ch - 1 + d + 69) % 69) + 1;
+const nextCh = (d) => ((tv.ch - 1 + d + CH_N) % CH_N) + 1;
 let staticT = 0, staticOff = 0, statSince = 0, osdT = 0;
 const statCv = $('#tv-static'), statCx = statCv.getContext('2d');
 function drawStatic() {
@@ -911,61 +1080,66 @@ function tvStatic(on) {
 let shieldT = 0;
 function tvShield() { const h = $('#tv-shield'); h.hidden = false; clearTimeout(shieldT); shieldT = setTimeout(() => { h.hidden = true; }, 3500); }
 // nothing to show: plain static instead of the last frame
-function tvNoSignal() { tubeTv.stop(); $('#tv-in').classList.add('nosig'); tvStatic(true); clearTimeout(staticOff); }
+function tvNoSignal() { tubeTv.stop(); reel.stop(); $('#tv-in').classList.add('nosig'); tvStatic(true); clearTimeout(staticOff); }
 function tvOsd(text, ms) { const o = $('#tv-osd'); o.textContent = text; o.hidden = false; clearTimeout(osdT); osdT = setTimeout(() => { o.hidden = true; }, ms); }
-function seeded(seed) { return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-async function tvLineup() {
-  if (tv.rows) return tv.rows;
-  if (!g.data.tv) g.data.tv = await guide('tv');
-  let seed = store.get('tvseed', 0); if (!seed) { seed = 1 + Math.floor(Math.random() * 1e9); store.set('tvseed', seed); }
-  const rnd = seeded(seed), a = g.data.tv.slice(0, 150);
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  tv.rows = a.slice(0, 69);
-  [[0, 'news'], [6, 'ads'], [10, 'toons']].forEach(([i, k]) => { tv.rows[i] = {title: SPECIALS[k].name, special: k}; });
-  return tv.rows;
-}
+async function tvLineup() { return (tv.rows = CHANNELS); }
 async function tvTune(ch) {
   if (!tv.on) return;
-  const tok = ++tv.tok; tv.ch = ch; store.set('tvch', ch); $('#tv-chnum').textContent = pad2(ch); $('#tv-name').hidden = true; $('#tv-osd').hidden = true;
-  tvStatic(true); sfx('static'); tubeTv.pause(); $('#tv-stat').textContent = 'Changing channel...';
-  let rows; try { rows = await tvLineup(); } catch (e) { tvNoSignal(); $('#tv-stat').textContent = "Couldn't load the TV lineup. Check your connection."; return; }
+  reel.unlock(); const tok = ++tv.tok; tv.ch = ch; store.set('tvch', ch); $('#tv-name').hidden = true; tvOsd('CH ' + pad2(ch), 4000);
+  tvStatic(true); sfx('static'); tvp.pause(); $('#tv-stat').textContent = 'Changing channel...';
+  const slow = setTimeout(() => { if (tok === tv.tok) $('#tv-stat').textContent = 'Looking for a recording...'; }, 1500);
+  let rows; try { rows = await tvLineup(); } catch (e) { clearTimeout(slow); tvNoSignal(); $('#tv-stat').textContent = "Couldn't load the TV lineup. Check your connection."; return; }
   const x = rows[ch - 1]; if (!x) return;
-  tv.ad = false; let pick; try { pick = x.special ? await specialPick(x.special) : await surfPick(x); } catch (e) { if (tok === tv.tok) { tvNoSignal(); note($('#tv-stat'), "Couldn't reach the video search.", youtubeSearchUrl(x.title)); } return; }
+  tv.ad = false; let pick; try { pick = (await tvIaPick(ch)) || (x.special ? await specialPick(x.special) : {ids: []}); clearTimeout(slow); } catch (e) { clearTimeout(slow); if (tok === tv.tok) { tvNoSignal(); note($('#tv-stat'), "Couldn't reach the video search.", youtubeSearchUrl(x.title)); } return; }
   if (tok !== tv.tok || !tv.on) return;
-  if (!pick.ids.length) { tvNoSignal(); note($('#tv-stat'), 'Nothing is on this channel right now.', youtubeSearchUrl(x.title + (x.special ? ' ' + era.y : ''))); return; }
-  const label = pick.label || x.title; tv.fresh = pick.long; $('#tv-name').textContent = label; $('#tv-stat').textContent = 'CH ' + pad2(ch) + '  ' + label + (x.nets && x.nets[0] ? '  (' + x.nets[0] + ')' : '');
-  if (!(await tubeTv.play(pick.ids))) { tvNoSignal(); note($('#tv-stat'), "Couldn't load YouTube.", youtubeSearchUrl(x.title)); return; }
-  setTimeout(() => { if (tok === tv.tok && !$('#tv-in').classList.contains('nosig')) tvStatic(false); }, 3500);
+  if (!(pick.ia || pick.ids).length) { tvNoSignal(); note($('#tv-stat'), 'Nothing is on this channel right now.', youtubeSearchUrl(x.title + (x.special ? ' ' + era.y : ''))); return; }
+  const label = x.special ? (pick.label || x.title) : x.title + ': ' + (pick.label || ''); tv.fresh = pick.long; $('#tv-name').textContent = label; $('#tv-stat').textContent = 'CH ' + pad2(ch) + '  ' + label + (x.nets && x.nets[0] ? '  (' + x.nets[0] + ')' : '');
+  if (!(await tvPlay(pick))) { tvNoSignal(); note($('#tv-stat'), "Couldn't load YouTube.", youtubeSearchUrl(x.title)); return; }
+  if (!pick.ia) setTimeout(() => { if (tok === tv.tok && !$('#tv-in').classList.contains('nosig')) tvStatic(false); }, 3500);
 }
 // a show ended: commercials from the era, then the next channel
 async function tvBreak() {
   const tok = ++tv.tok; tvStatic(true); $('#tv-name').hidden = true; $('#tv-stat').textContent = 'Commercial break...';
-  let pick; try { pick = await specialPick('ads'); } catch (e) { pick = {ids: []}; }
+  let pick; try { pick = await tvPick({special: 'ads'}); } catch (e) { pick = {ids: []}; }
   if (tok !== tv.tok || !tv.on) return;
-  if (!pick.ids.length) { tvTune(nextCh(1)); return; }
+  if (!(pick.ia || pick.ids).length) { tvTune(nextCh(1)); return; }
   tv.ad = true; tv.fresh = pick.long; $('#tv-stat').textContent = 'CH ' + pad2(tv.ch) + '  ' + pick.label;
-  if (!(await tubeTv.play(pick.ids))) { tv.ad = false; tvTune(nextCh(1)); return; }
-  setTimeout(() => { if (tok === tv.tok) tvStatic(false); }, 3500);
+  if (!(await tvPlay(pick))) { tv.ad = false; tvTune(nextCh(1)); return; }
+  if (!pick.ia) setTimeout(() => { if (tok === tv.tok) tvStatic(false); }, 3500);
 }
 function tvPower(on) {
   if (on === undefined) on = !tv.on;
   if (on === tv.on) return; tv.on = on; tv.ad = false; tv.tok++;
   const inn = $('#tv-in'); $('#tv-pow').classList.toggle('on', on);
-  if (on) { inn.hidden = false; inn.classList.remove('going'); inn.classList.add('warm'); sfx('static'); $('#tv-stat').textContent = 'Warming up...'; tvStatic(true); setTimeout(() => tvTune(tv.ch), 600); }
+  if (on) { reel.unlock(); tvWarm(tv.ch); inn.hidden = false; inn.classList.remove('going'); inn.classList.add('warm'); sfx('static'); $('#tv-stat').textContent = 'Warming up...'; tvStatic(true); setTimeout(() => tvTune(tv.ch), 600); }
   else {
-    tubeTv.stop(); tvStatic(false); $('#tv-shield').hidden = true; $('#tv-osd').hidden = true; $('#tv-name').hidden = true; inn.classList.remove('warm'); inn.classList.add('going');
+    warmTok++; tubeTv.stop(); reel.stopAll(); tvStatic(false); $('#tv-shield').hidden = true; $('#tv-osd').hidden = true; $('#tv-name').hidden = true; inn.classList.remove('warm'); inn.classList.add('going');
     setTimeout(() => { if (!tv.on) { inn.hidden = true; statCv.hidden = true; clearInterval(staticT); } }, 450);
-    $('#tv-chnum').textContent = '--'; $('#tv-stat').textContent = 'Press the power button.';
+    $('#tv-stat').textContent = 'Press the power button.';
   }
 }
-function tvVolume(d) { tv.vol = Math.max(0, Math.min(100, tv.vol + d)); tubeTv.volume(tv.vol); if (tv.on) tvOsd('VOL ' + '|'.repeat(Math.round(tv.vol / 10)), 2000); }
-function openTv(powerOn) { openWin('w-tv'); if (powerOn) tvPower(true); }
+function tvVolume(d) { tv.vol = Math.max(0, Math.min(100, tv.vol + d)); tvp.volume(tv.vol); if (tv.on) tvOsd('VOL ' + '|'.repeat(Math.round(tv.vol / 10)), 2000); }
+function openTv(powerOn) { openWin('w-tv'); if (powerOn) tvPower(true); else if (!tv.on) tvWarm(tv.ch); }
 $('#tv-pow').addEventListener('click', () => tvPower());
 $('#tv-chup').addEventListener('click', () => tv.on && tvTune(nextCh(1)));
 $('#tv-chdn').addEventListener('click', () => tv.on && tvTune(nextCh(-1)));
 $('#tv-vup').addEventListener('click', () => tvVolume(10));
 $('#tv-vdn').addEventListener('click', () => tvVolume(-10));
-addEventListener('keydown', (e) => { if (!tv.on || $('#w-tv').hidden || !$('#w-tv').classList.contains('active') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return; if (e.key === 'ArrowUp') { e.preventDefault(); tvTune(nextCh(1)); } else if (e.key === 'ArrowDown') { e.preventDefault(); tvTune(nextCh(-1)); } });
+// F: true full screen for the picture alone, on black; Esc leaves. Safari refuses when the window is already full screen, so the set then just fills the page
+const tvBez = $('.tvbezel'); let tvPseudo = false;
+const tvFsChanged = () => { tvBez.classList.toggle('full', fsEl() === tvBez || tvPseudo); document.body.classList.toggle('tvfull', tvPseudo); };
+function tvFullscreen() {
+  if (tvPseudo) { tvPseudo = false; tvBez.classList.remove('pfull'); tvFsChanged(); return; }
+  if (fsEl() === tvBez) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+  const fall = () => { if (fsEl() !== tvBez && !tvPseudo) { tvPseudo = true; tvBez.classList.add('pfull'); tvFsChanged(); } };
+  try { const f = tvBez.requestFullscreen || tvBez.webkitRequestFullscreen; if (!f) { fall(); return; } const r = f.call(tvBez); if (r && r.catch) r.catch(fall); else setTimeout(fall, 500); } catch (e) { fall(); }
+}
+document.addEventListener('fullscreenchange', tvFsChanged); document.addEventListener('webkitfullscreenchange', tvFsChanged);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tvPseudo) tvFullscreen(); });
+// number keys: 1 to 9 tune at once and 0 is channel 10
+function tvDigit(d) { if (tv.on) tvTune(d === '0' ? CH_N : +d); }
+$$('.tvkeys button').forEach((b) => b.addEventListener('click', () => tvDigit(b.dataset.k)));
+addEventListener('keydown', (e) => { if (!tv.on || $('#w-tv').hidden || !$('#w-tv').classList.contains('active') || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return; if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); tvTune(nextCh(1)); } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); tvTune(nextCh(-1)); } else if (/^\d$/.test(e.key) && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); tvDigit(e.key); } else if ((e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); tvFullscreen(); } });
 
 // the announcement is read aloud by the browser's own voice (no recording is used); it needs a browser with speech support
 let mailVoices = [];
@@ -1446,9 +1620,9 @@ const HELPS = {
     'Screen names are checked at sign-on and refused if someone online already has one. If two people still end up with the same name, the second shows as name (2). In a room, click a name to tag it with @name. A tag that names you is highlighted.',
     'Press the person button to edit your profile: mood, about text, color and a profile song. Others see it when they choose View Profile on your name, and it exists only while you are online. Anyone can join and nothing is moderated. Do not share personal details, and use Block in any chat.']],
   'TV': ['TV', [
-    'An old TV in your dock. Press the power button, then flip channels with the up and down buttons, or the arrow keys while the TV is selected. Volume has its own buttons.',
-    'Most of channels 1 to 69 are TV shows from 1996 to 2005, in a lineup that stays the same on every visit. There is also a news channel, a commercials channel and Saturday morning cartoons. The news looks for a broadcast from the exact date on your clock, then that month, then that year.',
-    'The TV finds a full episode or a scene on YouTube and drops you into the middle of it. When a show ends you may get a commercial break before the next channel. Videos about a show, like reactions and reviews, are filtered out, but titles are all it can go by, so a few may slip through.']],
+    'An old TV in your dock. Press the power button, then flip channels with the left and right buttons, or the arrow keys while the TV is selected. Type a channel number on the keyboard or the keypad. Volume has its own buttons. Press F for full screen (Esc leaves). Maximize the window with the green button and the picture stays 4:3 between two speakers.',
+    'Ten channels: 1 News, 2 Saturday morning cartoons, 3 Commercials, 4 Kids TV, 5 Toon Block, 6 Sitcoms, 7 Dramas, 8 Late Night, 9 Music TV and 10 Sports and Movies. Keys 1 to 9 on the keypad or keyboard tune at once, and 0 is channel 10. The news looks for a broadcast from the exact date on your clock, then that month, then that year.',
+    'Everything is a real recording of the era from the Internet Archive, mostly tapes of whole broadcasts with their own commercials, for the year on your clock. The TV drops you into the middle of it. What a channel shows stays the same for a clock date, and changes when you change the date. When something ends, you may get a commercial break before the next channel. It goes only by titles, so a recording can occasionally be a surprise.']],
   'Old Web': ['Old Web', [
     'A browser for the old web. It opens on an On This Day page for the date on your clock: headlines, the number one song and movie, new releases, what was on TV and a picture of the day, from Wikipedia and Wikimedia Commons. Home brings you back to it.',
     'Pick a bookmark or type an address to see a real website as the Internet Archive saved it near that date. Back and Forward work for pages you open from the toolbar, and the date button changes the day.',
@@ -1589,7 +1763,7 @@ function menusFor(app) {
     ['People', () => [{t: 'Buddy List', dis: !signedIn, fn: () => openWin('w-buddy')}, {t: 'My Profile', dis: !signedIn, fn: () => { showProfile('me'); openWin('w-myplace'); }}, {t: 'Join a Chat Room...', dis: !signedIn, fn: () => openWin('w-rooms')}, {sep: 1}].concat(ROOMS.map(([n, sl]) => ({t: '#' + n, dis: !signedIn, fn: () => openRoom(n, sl)})))], win, help];
   if (app === 'TV') return [
     ['File', () => [close]], edit,
-    ['Channel', () => [{t: tv.on ? 'Turn Off' : 'Turn On', fn: () => tvPower()}, {sep: 1}, {t: 'Channel Up', key: '\u2191', dis: !tv.on, fn: () => tvTune(nextCh(1))}, {t: 'Channel Down', key: '\u2193', dis: !tv.on, fn: () => tvTune(nextCh(-1))}, {sep: 1}, {t: 'Volume Up', dis: !tv.on, fn: () => tvVolume(10)}, {t: 'Volume Down', dis: !tv.on, fn: () => tvVolume(-10)}]], win, help];
+    ['Channel', () => [{t: tv.on ? 'Turn Off' : 'Turn On', fn: () => tvPower()}, {sep: 1}, {t: 'Channel Down', key: '\u2190', dis: !tv.on, fn: () => tvTune(nextCh(-1))}, {t: 'Channel Up', key: '\u2192', dis: !tv.on, fn: () => tvTune(nextCh(1))}, {sep: 1}, {t: 'Volume Up', dis: !tv.on, fn: () => tvVolume(10)}, {t: 'Volume Down', dis: !tv.on, fn: () => tvVolume(-10)}, {sep: 1}, {t: 'Full Screen', key: 'F', dis: !tv.on, fn: tvFullscreen}]], win, help];
   if (app === 'Old Web') return [
     ['File', () => [{t: 'Home Page', fn: () => webGo('yahoo.com')}, {t: 'Reload', dis: !webLoaded, fn: () => webGo(webUrl)}, {sep: 1}, close]], edit,
     ['Bookmarks', () => SITES.map(([n, u, from]) => ({t: n, dis: era.y < from, fn: () => webGo(u)}))], win, help];
@@ -1645,7 +1819,7 @@ const ctxEl = document.createElement('div'); ctxEl.id = 'ctx'; ctxEl.hidden = tr
 const closeCtx = () => { ctxEl.hidden = true; };
 $('#groups')._ctx = () => [{t: 'Join a Chat Room...', fn: () => openWin('w-rooms')}, {t: 'Set Away Message...', fn: () => { $('#awaymsg').focus(); }}, {sep: 1}, {t: 'Sign Off', fn: signOut}];
 $('#clock')._ctx = () => [{t: 'Date & Time...', fn: openDate}];
-$('.tvset')._ctx = () => [{t: tv.on ? 'Turn Off' : 'Turn On', fn: () => $('#tv-pow').click()}, {sep: 1}, {t: 'Channel Up', dis: !tv.on, fn: () => $('#tv-chup').click()}, {t: 'Channel Down', dis: !tv.on, fn: () => $('#tv-chdn').click()}, {sep: 1}, {t: 'Volume Up', fn: () => $('#tv-vup').click()}, {t: 'Volume Down', fn: () => $('#tv-vdn').click()}];
+$('.tvset')._ctx = () => [{t: tv.on ? 'Turn Off' : 'Turn On', fn: () => $('#tv-pow').click()}, {sep: 1}, {t: 'Channel Up', dis: !tv.on, fn: () => $('#tv-chup').click()}, {t: 'Channel Down', dis: !tv.on, fn: () => $('#tv-chdn').click()}, {sep: 1}, {t: 'Volume Up', fn: () => $('#tv-vup').click()}, {t: 'Volume Down', fn: () => $('#tv-vdn').click()}, {sep: 1}, {t: 'Full Screen', dis: !tv.on, fn: tvFullscreen}];
 function winItems(w) { return [{t: 'Minimize', fn: () => $('.l.min', w).click()}, {t: 'Zoom', dis: !w.hasAttribute('data-zoom'), fn: () => $('.l.zoom', w).click()}, {sep: 1}, {t: 'Close Window', fn: () => closeWin(w)}]; }
 function deskItems() {
   const cur = desk.dataset.wall, it2 = [{t: 'Desktop Color', dis: true}];

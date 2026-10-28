@@ -394,33 +394,49 @@ input[type=text],input[type=password],textarea,select{border:1px solid #7b7b7b;b
 .tvshield[hidden]{display:none}
 .tvstatic{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;image-rendering:pixelated;background:#888}
 .tvstatic[hidden],.osd[hidden],.osdname[hidden]{display:none}
-.osd{position:absolute;right:5%;top:6%;z-index:4;pointer-events:none;font:700 28px/1 "Courier New",monospace;color:#5cff5c;text-shadow:2px 2px 0 #000}
+.osd{position:absolute;right:5%;top:6%;z-index:4;pointer-events:none;font:700 38px/1 "Courier New",monospace;color:#5cff5c;text-shadow:2px 2px 0 #000}
 .osdname{position:absolute;left:5%;bottom:6%;z-index:4;pointer-events:none;font:700 15px/1.2 "Courier New",monospace;color:#fff;text-shadow:2px 2px 0 #000;max-width:80%}
 .tvbody{display:flex;flex-direction:column;background:#2a2c31;overflow:hidden}
-.tvset{flex:1;min-height:0;display:flex;gap:14px;margin:14px 14px 0;padding:16px;border-radius:18px;background:linear-gradient(#5a5e66,#34373d 40%,#26282c);box-shadow:inset 0 2px 3px rgba(255,255,255,.25),inset 0 -3px 6px rgba(0,0,0,.5),0 3px 8px rgba(0,0,0,.5)}
-.tvbezel{flex:1;min-width:0;display:grid;place-items:center;padding:14px;border-radius:14px;background:#15161a;box-shadow:inset 0 3px 8px #000,0 1px 0 rgba(255,255,255,.2)}
-.tvscreen{position:relative;width:100%;aspect-ratio:4/3;max-height:100%;border-radius:36px/30px;overflow:hidden;background:#000;box-shadow:0 0 0 3px #08090b,inset 0 0 40px rgba(0,0,0,.9)}
+/* a silver CRT set: speaker panels in the casing either side of the glass, the brand under it and a dark control strip below */
+.tvset{flex:1;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr) auto;gap:10px 14px;margin:14px 14px 0;padding:16px 16px 12px;border-radius:22px 22px 12px 12px;background:linear-gradient(#dde0e4,#bcc0c6 50%,#a5a9b0);box-shadow:inset 0 2px 3px rgba(255,255,255,.8),inset 0 -3px 6px rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.6)}
+.tvbezel{grid-column:2;grid-row:1;min-width:0;display:grid;place-items:center;padding:14px;border-radius:28px/24px;background:linear-gradient(#c4c8ce,#adb1b8);box-shadow:inset 0 3px 7px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.75)}
+.tvspk{grid-column:1;grid-row:1;align-self:stretch;width:clamp(34px,5.5vw,110px);margin:4px 0;border-radius:10px;background:radial-gradient(circle,#4f535b 0 1.2px,transparent 1.7px) 0 0/6px 6px,linear-gradient(90deg,#b4b8be,#a2a6ad);box-shadow:inset 0 2px 5px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.7)}
+.tvspk.r{grid-column:3}
+.tvscreen{position:relative;width:100%;aspect-ratio:4/3;max-height:100%;border-radius:36px/30px;overflow:hidden;background:#000;box-shadow:0 0 0 3px #3a3d42,0 0 0 5px rgba(255,255,255,.35),inset 0 0 40px rgba(0,0,0,.9)}
 .tvin{position:absolute;inset:0;transform-origin:50% 50%}
 .tvin[hidden]{display:none}
 .tvin .yth{position:absolute;inset:0;height:100%}
+.tvin .yth[hidden]{display:none}
+.tvin .yth video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;background:#000;pointer-events:none}
+.tvin .yth video.off{opacity:0;z-index:-1}
+.tvin .yth.idle{visibility:hidden}
 .tvin.warm{animation:crton .55s ease-out}
 .tvin.going{animation:croff .45s ease-in forwards}
 @keyframes crton{0%{transform:scale(1,.005);filter:brightness(5)}55%{transform:scale(1,.05);filter:brightness(3)}100%{transform:scale(1,1);filter:none}}
 @keyframes croff{0%{transform:scale(1,1)}60%{transform:scale(1,.02);filter:brightness(4)}100%{transform:scale(0,.004);opacity:0}}
 .crt{position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:inherit;background:repeating-linear-gradient(rgba(0,0,0,.18) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,rgba(255,255,255,.05) 40%,rgba(0,0,0,.45) 100%)}
-.tvpanel{flex:none;width:122px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 6px;border-radius:10px;background:linear-gradient(#3b3e45,#2c2e33);box-shadow:inset 0 1px 2px rgba(255,255,255,.2),inset 0 -2px 4px rgba(0,0,0,.5)}
-.tvbrand{font:700 12px/1 Georgia,serif;letter-spacing:2px;color:#d8dbe2;margin-bottom:4px}
-.tvch{width:84px;text-align:center;font:700 30px/1.4 "Courier New",monospace;color:#5cff5c;background:#06140a;border:2px solid #000;border-radius:4px;text-shadow:0 0 6px #2f9f2f}
-.tvlbl{font:700 9px/1 var(--ui);letter-spacing:1px;color:#9ea3ad;margin-top:6px}
-.tvbtns{display:flex;gap:6px}
-.tvbtns button{width:38px;height:30px;border-radius:6px;border:1px solid #111;background:linear-gradient(#6b6f78,#43464d);color:#eee;font-size:14px;cursor:pointer;box-shadow:0 2px 0 #111}
-.tvbtns button:active{transform:translateY(1px);box-shadow:0 1px 0 #111}
-.tvpow{margin-top:8px;width:44px;height:44px;border-radius:50%;border:2px solid #111;background:radial-gradient(circle at 35% 30%,#8a8e97,#3c3f46);color:#ddd;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 0 #111}
-.tvpow.on{color:#5cff5c;box-shadow:0 2px 0 #111,0 0 10px #2f9f2f}
-.tvgrill{margin-top:auto;width:84px;height:46px;background:repeating-linear-gradient(90deg,#111 0 3px,transparent 3px 8px);border-radius:4px;opacity:.7}
+.tvfront{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.tvbrand{font:700 11px/1 Georgia,serif;letter-spacing:3px;color:#666a72;text-shadow:0 1px 0 rgba(255,255,255,.65)}
+.tvpanel{width:100%;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:8px 12px;padding:7px 12px;border-radius:6px;background:linear-gradient(#26282c,#141518);box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(255,255,255,.7)}
+.tvgrp{display:flex;flex-direction:column;align-items:center;gap:3px}
+.tvlbl{font:700 7px/1 var(--ui);letter-spacing:1px;color:#8d939d}
+.tvbtns,.tvkeys{display:flex;gap:3px}
+.tvbtns button,.tvkeys button{box-sizing:border-box;width:26px;height:18px;padding:0;display:grid;place-items:center;border-radius:9px;border:1px solid #0b0b0c;background:linear-gradient(#eceef1,#b2b6bd);color:#2a2c31;font:700 10px/1 var(--ui);cursor:pointer;box-shadow:0 1px 0 #000}
+.tvbtns button:active,.tvkeys button:active{transform:translateY(1px);box-shadow:none}
+.tvpow{width:26px;height:26px;border-radius:50%;border:1px solid #0b0b0c;background:radial-gradient(circle at 35% 30%,#f3f4f6,#a9adb4);color:#2a2c31;cursor:pointer;display:grid;place-items:center;box-shadow:0 1px 0 #000}
+.tvpow.on{color:#0a7a0a;box-shadow:0 1px 0 #000,0 0 0 2px #2f9f2f,0 0 9px #5cff5c}
 .tvwin .tstat{color:#c8ccd4;background:#2a2c31;padding:6px 10px 8px}
 .win.zoomed .tvset{margin:0;border-radius:0}
-@media (max-width:700px){.tvset{flex-direction:column}.tvpanel{width:auto;flex-direction:row;flex-wrap:wrap;justify-content:center}}
+/* maximized: the picture keeps its 4:3 shape */
+.win.zoomed .tvbezel{container-type:size}
+.win.zoomed .tvspk{width:clamp(40px,8vw,120px)}
+.win.zoomed .tvscreen{width:min(100cqw,133.333cqh);max-height:none}
+/* F: full screen, only the 4:3 picture on black */
+.win .tvbezel.full{container-type:size;padding:0;border-radius:0;background:#000;box-shadow:none}
+.win .tvbezel.full .tvscreen{width:min(100cqw,133.333cqh);max-height:none;box-shadow:inset 0 0 40px rgba(0,0,0,.9)}
+.tvbezel.pfull{position:fixed;inset:0;z-index:40000}
+body.tvfull #menubar,body.tvfull #dock,body.tvfull #mailpop{display:none!important}
+@media (max-width:700px){.tvspk{display:none}.tvset{grid-template-columns:minmax(0,1fr)}.tvbezel,.tvfront{grid-column:1}}
 
 .nightbox .nbar{flex-direction:column;gap:6px}
 .nbtns{display:flex;gap:6px;flex-wrap:nowrap;justify-content:center}
