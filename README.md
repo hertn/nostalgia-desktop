@@ -12,8 +12,12 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 <table>
   <tr>
+    <td width="50%" align="center" valign="top"><img src="screenshots/boot.png" alt="Start-up screen with the power button and year pills" width="100%"><br><b>Start-up</b>: press the power button</td>
     <td width="50%" align="center" valign="top"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on "On this day"</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/guide.png" alt="Movie Guide" width="100%"><br><b>Movie Guide</b>: open it and find something</td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top"><img src="screenshots/guide.png" alt="Movie Guide with a Movie Night double feature on top" width="100%"><br><b>Movie Guide</b>, with a Movie Night double feature</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/catalog.png" alt="Catalog showing a spread from the 2005 Sears Christmas Book" width="100%"><br><b>Catalog</b>, a real 2005 Sears Christmas Book spread</td>
   </tr>
   <tr>
     <td width="50%" align="center" valign="top"><img src="screenshots/utunes.png" alt="uTunes showing the 2005 chart" width="100%"><br><b>uTunes</b>, with the 2005 chart</td>

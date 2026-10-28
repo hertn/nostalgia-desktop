@@ -23,3 +23,4 @@
 - TV showed a YouTube premiere scheduled for the future on the news channel. Future uploads are now skipped, and cached search results from before the fix are ignored.
 - TV now shows static, not the last frame, when a channel has nothing playing.
 - The spoken "You've got mail" is never spoken from a background tab, at most once a minute, and is cancelled when the page is hidden or closed.
+- README screenshots: the Old Web one was caught mid-load and is retaken; Movie Guide now shows a Movie Night double feature; all shots show the Catalog dock icon; added Catalog and start-up screen.
