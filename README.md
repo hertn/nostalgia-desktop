@@ -37,6 +37,8 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 For anyone who misses the early internet. It is a time capsule to look around in, a place to find something to watch or listen to, and a way to chat with other people who remember.
 
+**Why 1996 to 2005?** Those are the years I spent in school growing up in Estonia, where basic school runs from grade 1 to grade 9 (roughly ages 7 to 16). That makes them the most nostalgic years of my life. The content leans American (Billboard charts, US TV, US catalogs) because that is what reached me through a screen back then. If you are used to the US system, think of it as "from first grade until about the start of high school".
+
 ## What is inside
 
 | App | What it does |
