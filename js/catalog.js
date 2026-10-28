@@ -185,12 +185,11 @@ export function mountCatalog(env) {
   }
   const step = (d, fx, fy) => { const i = ZOOMS.findIndex((x) => x >= st.z - .01); zoom(ZOOMS[Math.max(0, Math.min(ZOOMS.length - 1, (i < 0 ? 0 : i) + d))], fx, fy); };
   $('#bk-zin').onclick = () => step(1); $('#bk-zout').onclick = () => step(-1);
-  let pinch = 0, pinchAt = 0;   // a trackpad pinch is a stream of small events: add them up and step once per ~half a pinch, then pause
+  // pinch (a ctrl-wheel stream on a trackpad) scales smoothly, like any picture on a Mac; a mouse wheel's big ticks are clamped
   stage.addEventListener('wheel', (e) => {
     if (!(e.ctrlKey || e.metaKey)) return; e.preventDefault();
-    const now = Date.now(); if (now - pinchAt < 250) return;
-    pinch += e.deltaY; if (Math.abs(pinch) < 60) return;
-    const r = stage.getBoundingClientRect(); step(pinch < 0 ? 1 : -1, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); pinch = 0; pinchAt = now;
+    const r = stage.getBoundingClientRect(), d = Math.max(-25, Math.min(25, e.deltaY));
+    zoom(st.z * Math.exp(-d * .012), (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
   }, {passive: false});
   book.addEventListener('dblclick', (e) => { const r = stage.getBoundingClientRect(); if (st.z > 1) zoom(1); else zoom(2, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); });
 
