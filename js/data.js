@@ -200,3 +200,30 @@ export async function onThisDay(y, m, d) {
   if (out.headlines.length || out.releases.length || out.onair.length || out.events.length || out.song || out.film || out.photo) cache.set(key, out);
   return out;
 }
+
+// Catalog: scans of the printed mail-order books (JCPenney and Sears) from christmas.musetechnical.com, which
+// serves them through an open JSON API. A page is one 750x1000 JPEG sent as base64; thumbnails are tiny.
+const SCANS = 'https://christmas.musetechnical.com/202510/Catalogs.Api/api/';
+export const SCANS_SITE = 'https://christmas.musetechnical.com/';
+const SEASONS = ['Spring Summer', 'Fall Winter', 'Christmas'];
+// the books of one year, as [{title, pages}]; Canadian editions are left out
+export async function catalogsFor(year) {
+  const key = 'scans-list1', hit = cache.get(key, 7 * DAY);
+  const all = hit || await getJSON(SCANS + 'Catalogs?strCatalogFilter=empty', 30000);
+  if (!hit) cache.set(key, all.map((c) => [c.catalogName, c.catalogPageCount]));
+  return all.map((c) => (Array.isArray(c) ? c : [c.catalogName, c.catalogPageCount]))
+    .filter(([n]) => n.indexOf(year + '-') === 0 && !/Canada/.test(n))
+    .map(([n, pages]) => { const title = n.replace(/-/g, ' '); return {title, pages, brand: /Sears/.test(title) ? 'Sears' : 'JCPenney', season: SEASONS.find((s) => title.indexOf(s) >= 0) || ''}; })
+    .sort((a, b) => a.brand.localeCompare(b.brand) || a.title.localeCompare(b.title));
+}
+export async function catalogPage(title, n) {
+  const j = await getJSON(SCANS + 'CatalogPageByCatalogNameAndCatalogPageNumber?strCatalogName=' + encodeURIComponent(title) + '&strCatalogPageNumber=' + n, 40000);
+  if (!j || !j.pageImageData) throw new Error('No page');
+  return 'data:image/jpeg;base64,' + j.pageImageData;
+}
+// small previews of pages start .. start+count-1, as {page number: data URL}
+export async function catalogThumbs(title, start, count) {
+  const j = await getJSON(SCANS + 'CatalogPages?strCatalogName=' + encodeURIComponent(title) + '&strPageStart=' + start + '&strPagesToGet=' + count, 40000);
+  const out = {}; (j || []).forEach((p) => { const n = parseInt(p.pageImageName, 10); if (n && p.pageThumbnailImage) out[n] = 'data:image/jpeg;base64,' + p.pageThumbnailImage; });
+  return out;
+}

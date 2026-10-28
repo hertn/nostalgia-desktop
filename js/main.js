@@ -2,8 +2,9 @@
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
 import {mountArcade} from './arcade.js?v=78';
 import {mountMail} from './mail.js?v=78';
+import {mountCatalog} from './catalog.js?v=82';
 import {SAVERS} from './savers.js?v=78';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay} from './data.js?v=80';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} from './data.js?v=82';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -229,6 +230,7 @@ const icons = {
   buddy: '<svg viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#1a1a1a" stroke-width="10"/><circle cx="42" cy="11" r="8" fill="#1a1a1a" stroke="none"/><path d="M37 21 31 38 M36 24 45 30 52 23 M36 24 27 28 19 35 M31 38 42 42 43 55 M31 38 23 48 11 51" stroke="#ffd21a" stroke-width="6"/><circle cx="42" cy="11" r="6" fill="#ffd21a" stroke="none"/></g></svg>',
   rooms: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a46bff"/><stop offset="1" stop-color="#4b1d8f"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g6)" stroke="#2a0a5a"/><rect x="11" y="14" width="30" height="22" rx="7" fill="#ffd43b" stroke="#8a6a00"/><rect x="25" y="28" width="28" height="20" rx="7" fill="#fff" stroke="#c9b6f5"/><ellipse cx="32" cy="12" rx="24" ry="9" fill="#fff" opacity=".28"/></svg>',
   tunes: '<svg viewBox="0 0 64 64"><defs><radialGradient id="g2" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#d9f0ff"/><stop offset=".5" stop-color="#3d95f0"/><stop offset="1" stop-color="#0c47a6"/></radialGradient></defs><circle cx="32" cy="32" r="29" fill="url(#g2)" stroke="#0b3a85"/><path d="M26 18v22a6 6 0 1 0 3 5V26l14-3v12a6 6 0 1 0 3 5V15z" fill="#fff"/><ellipse cx="32" cy="15" rx="22" ry="10" fill="#fff" opacity=".3"/></svg>',
+  cat: '<svg viewBox="0 0 64 64"><defs><linearGradient id="gc1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a4d"/><stop offset="1" stop-color="#b3261a"/></linearGradient></defs><rect x="9" y="5" width="46" height="54" rx="5" fill="url(#gc1)" stroke="#6e130b" stroke-width="1.5"/><rect x="15" y="12" width="34" height="14" rx="2" fill="#fff6dc"/><path d="M19 19h26" stroke="#b3261a" stroke-width="3" stroke-linecap="round"/><rect x="17" y="31" width="14" height="14" rx="2" fill="#ffe7a8"/><rect x="34" y="31" width="14" height="14" rx="2" fill="#bfe3ff"/><rect x="17" y="48" width="31" height="4" rx="2" fill="#fff6dc" opacity=".8"/><g fill="#d9d9d9" stroke="#555" stroke-width="1"><circle cx="9" cy="14" r="2.6"/><circle cx="9" cy="24" r="2.6"/><circle cx="9" cy="34" r="2.6"/><circle cx="9" cy="44" r="2.6"/><circle cx="9" cy="54" r="2.6"/></g></svg>',
   tv: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g11" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7b7f88"/><stop offset="1" stop-color="#34373d"/></linearGradient><linearGradient id="g12" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6f3ff"/><stop offset="1" stop-color="#4aa6d8"/></linearGradient></defs><path d="M24 14L16 4M40 14L48 4" stroke="#555" stroke-width="2.5" stroke-linecap="round"/><rect x="4" y="14" width="56" height="42" rx="9" fill="url(#g11)" stroke="#1d1f23" stroke-width="2"/><rect x="9" y="19" width="34" height="32" rx="7" fill="url(#g12)" stroke="#111" stroke-width="1.5"/><circle cx="52" cy="26" r="3.4" fill="#cfd2d8" stroke="#222"/><circle cx="52" cy="38" r="3.4" fill="#cfd2d8" stroke="#222"/><path d="M48 46h8" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>',
   qt: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c6a80"/><stop offset="1" stop-color="#1d2433"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g8)" stroke="#0b0f18"/><circle cx="32" cy="32" r="17" fill="#3d95f0" stroke="#d9f0ff" stroke-width="2"/><path d="M27 23l16 9-16 9z" fill="#fff"/><ellipse cx="32" cy="14" rx="24" ry="9" fill="#fff" opacity=".25"/></svg>',
   guide: '<svg viewBox="0 0 64 64"><defs><linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#e07b00"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g9)" stroke="#8a4a00"/><rect x="13" y="26" width="38" height="24" rx="3" fill="#222"/><path d="M13 26l5-11 7 2-5 9zM27 19l7 2-5 8-7-2zM41 22l7 2-5 5-7-2z" fill="#fff" stroke="#222" stroke-width="1"/><ellipse cx="32" cy="12" rx="24" ry="8" fill="#fff" opacity=".3"/></svg>',
@@ -242,6 +244,7 @@ const dockItems = [
   {k: 'buddy', label: 'NIM', wins: ['w-sign', 'w-buddy', 'w-rooms', 'w-myplace'], open: () => (signedIn ? 'w-buddy' : 'w-sign')},
   {k: 'tunes', label: 'uTunes', wins: ['w-utunes'], open: () => 'w-utunes'},
   {k: 'guide', label: 'Movie Guide', wins: ['w-guide'], open: () => 'w-guide'},
+  {k: 'cat', label: 'Catalog', wins: ['w-cat'], open: () => { cat.ensure(); return 'w-cat'; }},
   {k: 'tv', label: 'TV', wins: ['w-tv'], open: () => 'w-tv'},
   {k: 'qt', label: 'QuickShow', wins: ['w-qt'], open: () => 'w-qt'},
   {k: 'arcade', label: 'Arcade', wins: ['w-arcade'], open: () => { arcade.ensure(); return 'w-arcade'; }},
@@ -970,12 +973,19 @@ function maleVoice() {
   const en = mailVoices.filter((v) => /^en[-_]/i.test(v.lang)), us = en.filter((v) => /^en[-_]US/i.test(v.lang));
   return us.filter((v) => MALE.test(v.name))[0] || en.filter((v) => MALE.test(v.name))[0] || null;
 }
+let lastSaid = 0;
+// some browsers keep a queued voice going after the tab is hidden or closed, so stop it as soon as the page goes away
+const hush = () => { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) { /* no speech available */ } };
+window.addEventListener('pagehide', hush); window.addEventListener('beforeunload', hush);
+document.addEventListener('visibilitychange', () => { if (document.hidden) hush(); });
 function sayMail() {
   try {
-    if (!soundOn || !window.speechSynthesis) return;
+    // never speak from a background tab, and never more than once a minute
+    if (!soundOn || !window.speechSynthesis || document.hidden || Date.now() - lastSaid < 60000) return;
+    lastSaid = Date.now();
     const u = new SpeechSynthesisUtterance("You've got mail!"); u.lang = 'en-US'; u.rate = .9; u.volume = 1;
     const v = maleVoice(); if (v) { u.voice = v; u.pitch = .85; } else u.pitch = .3;   // no known man's voice here: drop the pitch of the default one
-    speechSynthesis.cancel(); setTimeout(() => speechSynthesis.speak(u), 650);
+    speechSynthesis.cancel(); setTimeout(() => { if (!document.hidden) speechSynthesis.speak(u); }, 650);
   } catch (e) { /* no speech available */ }
 }
 const mailSetBadge = (n) => { const it2 = dockItems.filter((x) => x.k === 'mail')[0]; if (!it2) return; let b = $('.badge', it2.el); if (!b) { b = document.createElement('span'); b.className = 'badge'; it2.el.appendChild(b); } b.textContent = n; b.hidden = !n; };
@@ -986,6 +996,7 @@ function mailPop(m) {
   clearTimeout(p._t); p._t = setTimeout(() => { p.hidden = true; }, 7000);
 }
 const mail = mountMail({$, store, sfx, MONTHS, DOWS, getEra: () => era, getDigest: (e) => onThisDay(e.y, e.m, e.d), setBadge: mailSetBadge, onNew: mailPop, ready: () => boot.hidden || /noboot/.test(location.search + location.hash)});
+const cat = mountCatalog({$, store, getEra: () => era, data: {catalogsFor, catalogPage, catalogThumbs, SCANS_SITE}});
 const arcade = mountArcade({$, $$, store, sfx, active: () => { const w = $('#w-arcade'); return !w.hidden && w.classList.contains('active'); }});
 
 /* Movie Guide: filter movies and shows from 1996 to 2005, pick one, keep a watchlist */
@@ -1171,6 +1182,7 @@ function setEra(p, auto) {
   if (!$('#w-date').hidden) fillDateWin();
   if (typeof it.src === 'number' && it.src !== era.y) itYear(era.y);
   g.year = String(era.y); g.pick = null; if (g.kind !== 'watch' && g.data[g.kind]) buildFilters(); renderGuide();
+  cat.eraChanged();
   syncWeb(); if (webHomeOn) webHome(true); else if (webLoaded) webGo(webUrl, true);
 }
 $('#dt-m').addEventListener('change', (e) => setEra({m: +e.target.value}));
@@ -1313,6 +1325,7 @@ const APPS = [
   ['QuickShow', () => openWin('w-qt')],
   ['Movie Guide', () => openWin('w-guide')],
   ['Mail', () => openWin('w-mail')],
+  ['Catalog', () => { cat.ensure(); openWin('w-cat'); }],
   ['Arcade', () => { arcade.ensure(); openWin('w-arcade'); }],
   ['Sounds', () => openWin('w-sounds')],
   ['Old Web', () => { openWin('w-web'); webFirst(); }],
@@ -1361,6 +1374,10 @@ const HELPS = {
     'A small inbox. New mail arrives every 8 to 12 minutes while you use the computer (Settings lets you make it more or less often, or only when you press Get Mail). A chime plays, a voice announces "You\'ve got mail!" (read by your browser\'s own voice, so it sounds different on each computer), a mailbox pops up, and a red number on the dock icon shows how many are unread. Press Get Mail to check right away.',
     'The Postmaster sends a Daily Digest for the date on your clock: the number one song and movie, headlines and history, from the same sources as Old Web. The rest are chain letters, forwards and notes from the regulars on NIM. All of it is written for this site, and nothing is sent anywhere.',
     'Right-click a message to mark it unread or delete it. Your inbox is saved in this browser only.']],
+  'Catalog': ['Catalog', [
+    'Scans of the real printed mail-order catalogs, the thick JCPenney and Sears books that came in the mail before online shopping. It opens the one that fits the date on your clock: the Christmas book in November and December, the Fall and Winter book from August, and the Spring and Summer book the rest of the year, whichever of those exists for that year. Library shows every catalog from that year.',
+    'Turn pages by clicking the left or right side of the book, dragging across it, using the arrow buttons or the left and right arrow keys. The Pages sidebar jumps anywhere, and typing a number in the box goes to that page. The + and - buttons (or the + and - keys, double-clicking a page, or Ctrl or Cmd with the scroll wheel or a pinch) zoom in and out, and you drag to look around. The button next to the zoom buttons (or the F key) shows just the book in true full screen, with no windows or menus, and Esc leaves it. The green button makes the window bigger. Your place in each catalog is remembered in this browser.',
+    'Pages load from christmas.musetechnical.com, which keeps the scans online for anyone to look at, so a page can take a few seconds to arrive and the catalogs need an internet connection. Prices, phone numbers and offers are from the original books and nothing here can be ordered.']],
   'Arcade': ['Arcade', [
     'Four small games, all made for this site. Snake is a green phone screen: use the arrow keys, WASD or the pad, and Space pauses. Minefield is the classic: click to open a square, right-click to flag it (the Flag button does it for touch screens).',
     'Blockfall is falling blocks: left and right move, Up or Z turns the piece left, X turns it right, Space drops it, P pauses, and full rows clear. Pixel Pet is a keychain dog or cat that hatches after a minute, grows, and gets hungry and bored while you are away, so come back and feed it. It never dies and it makes noise when it needs you.',
@@ -1385,6 +1402,7 @@ const ABOUTS = {
   'NIM': ['NIM', ['Nostalgia IM. Instant messages, chat rooms and profiles.', 'Part of Nostalgia Desktop.']],
   'TV': ['TV', ['An old TV with channels from the era.', 'Part of Nostalgia Desktop.']],
   'Mail': ['Mail', ['A small inbox with chain letters and a daily digest.', 'Part of Nostalgia Desktop.']],
+  'Catalog': ['Catalog', ['Scans of the printed JCPenney and Sears catalogs of the year.', 'Part of Nostalgia Desktop.']],
   'Arcade': ['Arcade', ['Four small games made for this site.', 'Part of Nostalgia Desktop.']],
   'Old Web': ['Old Web', ['The web as it looked, from the Internet Archive.', 'Part of Nostalgia Desktop.']],
   'Date & Time': ['Date & Time', ['Set the clock anywhere from 1996 to 2005.', 'Part of Nostalgia Desktop.']],
@@ -1486,6 +1504,9 @@ function menusFor(app) {
     ['Bookmarks', () => SITES.map(([n, u, from]) => ({t: n, dis: era.y < from, fn: () => webGo(u)}))], win, help];
   if (app === 'Date & Time') return [['File', () => [close]], edit, win, help];
   if (app === 'Mail') return [['File', () => [{t: 'Get Mail', fn: () => mail.check(false)}, {sep: 1}, close]], edit, win, help];
+  if (app === 'Catalog') return [
+    ['File', () => [{t: 'Library...', fn: () => cat.library()}, {sep: 1}, close]], edit,
+    ['Go', () => [{t: 'Next Page', key: '\u2192', fn: () => cat.turn(1)}, {t: 'Previous Page', key: '\u2190', fn: () => cat.turn(-1)}, {sep: 1}, {t: 'First Page', fn: () => cat.first()}, {t: 'Last Page', fn: () => cat.last()}, {sep: 1}, {t: 'Full Screen', key: 'F', fn: () => cat.fullscreen()}, {sep: 1}, {t: 'Zoom In', key: '+', fn: () => cat.zoomIn()}, {t: 'Zoom Out', key: '-', fn: () => cat.zoomOut()}, {t: 'Fit on Screen', key: '0', fn: () => cat.zoomFit()}, {sep: 1}, {t: 'Show or Hide Pages Sidebar', fn: () => cat.toggleSide()}]], win, help];
   if (app === 'Arcade') return [
     ['File', () => [{t: 'New Game', fn: () => arcade.restart()}, {sep: 1}, close]], edit,
     ['Game', () => [['snake', 'Snake'], ['mines', 'Minefield'], ['blocks', 'Blockfall'], ['pet', 'Pixel Pet']].map(([k, n]) => ({t: (arcade.current() === k ? '✓ ' : ' ') + n, fn: () => arcade.show(k)}))], win, help];

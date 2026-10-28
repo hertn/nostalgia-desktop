@@ -194,8 +194,29 @@
     </div>
   </section>
 
+  <!-- Catalog: scans of the printed JCPenney and Sears books, read like a PDF -->
+  <section class="win" id="w-cat" data-zoom="1" data-app="Catalog" style="left:100px;top:34px;width:780px" hidden>
+    <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Catalog</div></div>
+    <div class="body cat">
+      <div class="bk-bar">
+        <button type="button" class="btn-aqua sm" id="bk-side-btn">Pages</button><button type="button" class="btn-aqua sm" id="bk-lib-btn">Library</button>
+        <span class="bk-title" id="bk-title"></span>
+        <button type="button" class="btn-aqua sm" id="bk-prev" aria-label="Previous page">&#9664;</button><button type="button" class="btn-aqua sm" id="bk-next" aria-label="Next page">&#9654;</button>
+        <button type="button" class="btn-aqua sm" id="bk-zout" aria-label="Zoom out" disabled>&minus;</button><button type="button" class="btn-aqua sm" id="bk-zin" aria-label="Zoom in">+</button>
+        <button type="button" class="btn-aqua sm" id="bk-fs" aria-label="Full screen" title="Full screen (F)">&#10530;</button>
+        <input type="text" id="bk-go" size="4" aria-label="Go to page" placeholder="Page">
+      </div>
+      <div class="bk-main">
+        <div class="bk-side" id="bk-side"></div>
+        <div class="bk-stage" id="bk-stage"><div class="bk-book" id="bk-book"></div><div class="bk-lib" id="bk-lib" hidden></div></div>
+      </div>
+      <div class="bk-foot"><span id="bk-where"></span></div>
+      <div class="tstat" id="ct-stat"></div>
+    </div>
+  </section>
+
   <!-- Mail -->
-  <section class="win" id="w-mail" data-app="Mail" style="left:180px;top:48px;width:600px" hidden>
+  <section class="win" id="w-mail" data-zoom="1" data-app="Mail" style="left:180px;top:48px;width:600px" hidden>
     <div class="bar"><div class="lights"><button class="l close" aria-label="Close"></button><button class="l min" aria-label="Minimize"></button><button class="l zoom" aria-label="Zoom"></button></div><div class="title">Mail</div></div>
     <div class="body mail">
       <div class="ml-bar"><button type="button" class="btn-aqua sm" id="ml-get">Get Mail</button><button type="button" class="btn-aqua sm" id="ml-del">Delete</button><button type="button" class="btn-aqua sm" id="ml-set">Settings</button><span id="ml-stat"></span></div>

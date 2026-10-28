@@ -39,8 +39,9 @@ For anyone who misses the early internet. It is a time capsule to look around in
 | --- | --- |
 | **Movie Guide** | Don't know what to watch? Open it and find something. Browse movies and TV shows from the era, filter by year, genre or network, press the **Surprise me** button for a random pick, or press the **Movie Night** button to get a double feature. Save favorites to a watchlist. |
 | **uTunes** | The Billboard Year-End Hot 100 for every year, with the music videos. Build a playlist, then send it to Spotify or Apple Music (see below). |
-| **TV** | An old TV with channels 1 to 69: shows from the era, an evening news channel from the exact date on your clock, commercials and Saturday morning cartoons. |
+| **TV** | An old TV with channels 1 to 69: shows from the era, a news channel (channel 1) from the exact date on your clock, commercials and Saturday morning cartoons. |
 | **Old Web** | Real websites as the Internet Archive saved them near your date. It opens on an "On this day" page with headlines, the number one song and movie, what was on TV and a picture of the day, and it dials in with a modem the first time. |
+| **Catalog** | The real printed JCPenney and Sears catalogs of the year on your clock, as page scans you flip through like a book: the Christmas Wish Book in November and December, the Fall and Winter or Spring and Summer book the rest of the year. Click the sides or drag to turn pages, zoom in, jump with the page sidebar, open the **Library** for every catalog from that year, or press **F** for true full screen. |
 | **Mail** | Email coming in, with true-to-era messages: chain letters, forwards, notes from friends and a daily digest of your date. Each one arrives with a chime and a spoken announcement. The **Settings** button sets how often. |
 | **NIM** (Nostalgia IM) | A buddy list, instant messages, public chat rooms and profiles, with the sounds you remember. |
 | **Arcade** | Snake on a phone screen, Minefield, Blockfall (Tetris-style), and a Tamagotchi-style virtual pet, a dog or cat that keeps living while the page is closed. |
@@ -66,6 +67,7 @@ It is plain HTML, CSS and JavaScript (ES modules) with no build step, no server 
 - **"On this day":** Wikipedia date pages and current events, with Wikimedia Commons pictures of the day
 - **Videos:** found through public Piped search instances and played in YouTube's embedded player (videos that disallow embedding are skipped)
 - **Old websites:** the Internet Archive's Wayback Machine
+- **Catalog pages:** scans from [christmas.musetechnical.com](https://christmas.musetechnical.com/), loaded straight from your browser to their server (their server only handles two requests at a time, so new pages take a moment; pages you have seen are kept in your browser)
 
 ### Chat
 
@@ -76,6 +78,7 @@ Visitors connect directly to each other with WebRTC, and [Trystero](https://gith
 - It works best in Safari or Chrome. Some Firefox versions struggle with embedded YouTube videos.
 - Some networks block WebRTC, so chat shows only the bots there.
 - Archived websites load slowly and are often missing pictures or links.
+- Catalog pages come from someone else's small server, so a page you have not seen can take a second or two. If the catalog does not load, that server is busy or offline.
 - Browsers only allow sound after you click something, and the spoken mail announcement uses your browser's own voice, so it differs from computer to computer.
 - Your pet, inbox, playlist, scores and settings are stored in your browser only.
 
@@ -94,8 +97,10 @@ Then open http://localhost:8765. YouTube embeds need `http(s)`, so opening `inde
     css/style.css     all styling
     js/main.js        the desktop, apps, chat, TV, Old Web and menus
     js/data.js        the live data lookups
+    CHANGELOG.md      what changed and when
     js/arcade.js      the games
     js/mail.js        the inbox
+    js/catalog.js     the catalog viewer (page flipping, zoom, full screen)
     js/savers.js      the screen savers
 
 ## Credits
@@ -104,7 +109,7 @@ Built by Claude, an AI made by Anthropic, and directed by Hert Niks.
 
 Chat uses [Trystero](https://github.com/dmotz/trystero) (MIT). Wikipedia text is available under CC BY-SA and is read live, not copied into this repository.
 
-This is a fan tribute. Names, marks, icons and sounds are original or generated in the browser. It has no connection to any real company or service and uses none of their logos or recordings.
+The catalog pages are scans of real printed JCPenney and Sears catalogs, hosted by [christmas.musetechnical.com](https://christmas.musetechnical.com/) and shown here by linking to them, not copied into this repository. This is a fan tribute. Apart from those scans, names, marks, icons and sounds are original or generated in the browser. It has no connection to any real company or service and uses none of their logos or recordings.
 
 ## License
 
