@@ -10,26 +10,20 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 ## Screenshots
 
+<p align="center"><a href="https://hertn.github.io/nostalgia-desktop/gallery.html"><img src="screenshots/filmstrip.png" alt="A film strip of screenshots" width="100%"></a><br><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Open the full film strip (13 pictures)</a></b></p>
+
 <table>
   <tr>
-    <td width="50%" align="center" valign="top"><img src="screenshots/boot.png" alt="Start-up screen with the power button and year pills" width="100%"><br><b>Start-up</b>: press the power button</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on "On this day"</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/tvguide.png" alt="TV Guide showing a printed-style Saturday morning page" width="100%"><br><b>TV Guide</b>, listings rebuilt as printed pages</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/tvguide-scan.png" alt="A real 1998 TV Guide cover in the viewer" width="100%"><br><b>TV Guide</b>, scans of real issues</td>
   </tr>
   <tr>
-    <td width="50%" align="center" valign="top"><img src="screenshots/guide.png" alt="Movie Guide with a Movie Night double feature on top" width="100%"><br><b>Movie Guide</b>, with a Movie Night double feature</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/catalog.png" alt="Catalog showing a spread from the 2005 Sears Christmas Book" width="100%"><br><b>Catalog</b>, a real 2005 Sears Christmas Book spread</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/catalog.png" alt="Catalog showing a 2005 JCPenney Christmas Book spread" width="100%"><br><b>Catalog</b>, real scanned spreads</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/movienight.png" alt="Movie Night shelf with two films picked for tonight" width="100%"><br><b>Movie Night</b>, your watchlist on a shelf</td>
   </tr>
   <tr>
-    <td width="50%" align="center" valign="top"><img src="screenshots/utunes.png" alt="uTunes showing the 2005 chart" width="100%"><br><b>uTunes</b>, with the 2005 chart</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/tv.png" alt="TV playing a show" width="100%"><br><b>TV</b>, channel 3</td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top"><img src="screenshots/quickshow.png" alt="QuickShow playing a trailer" width="100%"><br><b>QuickShow</b>, playing a trailer</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/mail.png" alt="Mail with a new message popup" width="100%"><br><b>Mail</b>, with a new message arriving</td>
-  </tr>
-  <tr>
-    <td width="50%" align="center" valign="top"><img src="screenshots/nim.png" alt="NIM with the buddy list, an instant message, a chat room and a profile open" width="100%"><br><b>NIM</b>, chat rooms and profiles</td>
-    <td width="50%" align="center" valign="top"><img src="screenshots/blockfall.png" alt="Blockfall in the Arcade" width="100%"><br><b>Arcade</b>, playing Blockfall</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on the day on your clock</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/nim.png" alt="NIM with buddy list, chat room and a profile" width="100%"><br><b>NIM</b>, chat rooms and profiles</td>
   </tr>
 </table>
 

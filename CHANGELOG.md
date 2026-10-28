@@ -3,6 +3,8 @@
 ## 2026-10-28
 
 ### Added
+- **Film strip gallery** (`gallery.html`): the screenshots as a clickable film strip with arrow keys and swipe, linked from the README.
+- Restart now boots straight back up instead of stopping at the power button; Movie Night's "Add both to watchlist" confirms the add.
 - **Catalog app:** the real printed JCPenney and Sears catalogs for the year on the clock, as page scans from christmas.musetechnical.com.
   - The Library holds every book of the year on the clock, in order through the year (JCPenney before Sears). The book for the clock's quarter opens: Spring and Summer from January to June, Fall and Winter from July to September, Christmas from October to December. If the year has none for that quarter, the first book opens.
   - Two-page spread with a page-flip animation. Turn pages by clicking the sides, dragging, the arrow buttons or the arrow keys.
