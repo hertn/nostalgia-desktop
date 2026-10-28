@@ -670,8 +670,11 @@ body.bootin #menubar{animation:menuin .5s ease-out}
 .win .body.cat .tstat a{color:#0f3e8c}
 .bk-stage:fullscreen{background:#000;overflow:auto}
 .bk-stage:-webkit-full-screen{background:#000;overflow:auto}
+.bk-stage.pfull{position:fixed;inset:0;z-index:40000;background:#000;overflow:auto}
 .bk-stage.full .bk-book{width:calc(min(99cqw,99cqh * 1.5) * var(--z,1));height:calc(min(66cqw,99cqh) * var(--z,1))}
 .bk-stage.full .bk-pg{box-shadow:none}
-.bk-hint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:8;max-width:90%;padding:6px 14px;border-radius:14px;background:rgba(0,0,0,.72);color:#fff;font:13px var(--ui);text-align:center;pointer-events:none;opacity:1;transition:opacity .6s}
+.bk-hint{position:absolute;width:max-content;left:50%;bottom:18px;transform:translateX(-50%);z-index:8;max-width:90%;padding:6px 14px;border-radius:14px;background:rgba(0,0,0,.72);color:#fff;font:13px var(--ui);text-align:center;pointer-events:none;opacity:1;transition:opacity .6s}
 .bk-hint.out{opacity:0}
 .bk-stage:not(.full) .bk-hint{display:none}
+
+body.bkfull #menubar,body.bkfull #dock,body.bkfull #mailpop{display:none!important}

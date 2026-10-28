@@ -2,9 +2,9 @@
 import {joinRoom, selfId} from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm';
 import {mountArcade} from './arcade.js?v=78';
 import {mountMail} from './mail.js?v=78';
-import {mountCatalog} from './catalog.js?v=84';
+import {mountCatalog} from './catalog.js?v=92';
 import {SAVERS} from './savers.js?v=78';
-import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} from './data.js?v=82';
+import {YEARS, topSongs, guide, about, searchVideos, youtubeSearchUrl, onThisDay, catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} from './data.js?v=83';
 
 const APP = 'y2k-time-machine-v1';
 const $ = (s, r) => (r || document).querySelector(s);

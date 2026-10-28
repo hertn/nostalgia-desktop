@@ -7,7 +7,7 @@ export function mountCatalog(env) {
   const {$, store, getEra, data} = env;
   const {catalogsFor, catalogPage, catalogThumbs, SCANS_SITE} = data;
   const stage = $('#bk-stage'), book = $('#bk-book'), side = $('#bk-side'), where = $('#bk-where'), stat = $('#ct-stat'), title = $('#bk-title'), lib = $('#bk-lib'), pgIn = $('#bk-go');
-  const st = {year: 0, list: [], cur: null, spread: 0, flipping: false, z: 1, manual: false, loaded: false, tok: 0, sideOn: true};
+  const st = {year: 0, list: [], cur: null, spread: 0, flipping: false, z: 1, manual: false, loaded: false, season: '', mixed: false, tok: 0, sideOn: true};
   const pos = store.get('catpos', {}); const savePos = () => { if (st.cur) { pos[st.cur.title] = st.spread; store.set('catpos', pos); } };
 
   // ---- loading. The scan server drops connections when more than two requests run at once, so everything
@@ -94,7 +94,7 @@ export function mountCatalog(env) {
     const [a, b] = pagesOf(st.spread), lo = a || b, hi = b || a;
     where.textContent = (lo === hi ? 'Page ' + lo : 'Pages ' + lo + ' and ' + hi) + ' of ' + total() + (st.z > 1 ? '  \u00b7  ' + Math.round(st.z * 100) + '%' : '');
     pgIn.value = ''; pgIn.placeholder = String(lo);
-    if (typeof fsEl === 'function' && fsEl() === stage) flash(where.textContent, 1200);
+    if (typeof fsEl === 'function' && (fsEl() === stage || pseudo)) flash(where.textContent, 1200);
   }
   function prefetch() {
     const t = st.cur.title;
@@ -141,11 +141,9 @@ export function mountCatalog(env) {
   }
 
   // ---- which book: the one that fits the date on the clock, or any other from that year
-  function pick() {
-    const m = getEra().m, want2 = m >= 11 ? ['Sears Christmas', 'JCPenney Christmas'] : m >= 8 ? ['JCPenney Fall Winter', 'Sears Christmas', 'JCPenney Christmas'] : ['JCPenney Spring Summer', 'JCPenney Fall Winter', 'Sears Christmas'];
-    for (const w of want2) { const f = st.list.find((c) => (c.brand + ' ' + c.season).indexOf(w) === 0); if (f) return f; }
-    return st.list[0] || null;
-  }
+  // the clock's quarter picks the season, and the library shows only that year's books of that season
+  const seasonOf = (m) => (m <= 6 ? 'Spring Summer' : m <= 9 ? 'Fall Winter' : 'Christmas');
+  const pick = () => st.list[0] || null;
   function open(c) {
     if (!c) { stat.textContent = 'No catalog from this year.'; return; }
     st.tok++; zoom(1); st.cur = {title: c.title, pages: c.pages}; st.spread = Math.min(pos[c.title] || 0, Math.floor(c.pages / 2));
@@ -153,7 +151,7 @@ export function mountCatalog(env) {
   }
   function credit() { stat.textContent = 'Scans courtesy of '; const a = el('a', null, 'christmas.musetechnical.com'); a.href = SCANS_SITE; a.target = '_blank'; a.rel = 'noopener'; stat.appendChild(a); }
   function drawLib() {
-    lib.innerHTML = ''; lib.appendChild(el('div', 'bk-lt', 'Catalogs from ' + st.year));
+    lib.innerHTML = ''; lib.appendChild(el('div', 'bk-lt', (st.mixed ? 'Catalogs from ' : st.season.replace(' ', '/') + ' catalogs from ') + st.year));
     const g = el('div', 'bk-lg');
     st.list.forEach((c) => {
       const b = el('button', 'bk-lb' + (st.cur && st.cur.title === c.title ? ' on' : '')); b.type = 'button';
@@ -166,12 +164,15 @@ export function mountCatalog(env) {
     const x = el('button', 'btn-aqua sm', 'Close'); x.type = 'button'; x.onclick = () => { lib.hidden = true; }; lib.appendChild(x);
   }
   async function load() {
-    const y = getEra().y, tok = ++st.tok; st.year = y; st.loaded = true; stat.textContent = 'Opening the catalog...'; st.cur = null; book.innerHTML = ''; side.innerHTML = '';
-    try { st.list = await catalogsFor(y); } catch (e) {
+    const y = getEra().y, tok = ++st.tok; st.year = y; st.loaded = true; $('#bk-lib-btn').textContent = 'Library'; stat.textContent = 'Opening the catalog...'; st.cur = null; book.innerHTML = ''; side.innerHTML = '';
+    const sn = seasonOf(getEra().m); st.season = sn;
+    try { const all = await catalogsFor(y), now = all.filter((c) => c.season === sn); st.list = now.length ? now : all; st.mixed = !now.length; } catch (e) {
       if (tok !== st.tok) return; stat.textContent = ''; book.innerHTML = '';
       const m = el('div', 'bk-msg', 'The catalogs did not arrive. Check your connection. '), b = el('button', 'btn-aqua sm', 'Try again'); b.type = 'button'; b.onclick = load; m.appendChild(b); book.appendChild(m); return;
     }
-    if (tok !== st.tok) return; open(pick());
+    if (tok !== st.tok) return;
+    $('#bk-lib-btn').textContent = 'Library (' + st.list.length + ')';
+    open(pick());
   }
 
   // ---- zoom: the book grows inside the stage and you drag to look around
@@ -195,17 +196,27 @@ export function mountCatalog(env) {
 
   // ---- true full screen: just the book on black, no windows or menus; Esc leaves it
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
-  const canFs = !!(stage.requestFullscreen || stage.webkitRequestFullscreen);
+  // some browsers (Safari when the window is already full screen) refuse element full screen: then the stage just fills the page
+  let pseudo = false;
+  const setPseudo = (on) => { pseudo = on; stage.classList.toggle('pfull', on); document.body.classList.toggle('bkfull', on); fsChanged(); };
   function fullscreen() {
-    if (!canFs) return;
+    if (pseudo) { setPseudo(false); return; }
     if (fsEl() === stage) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
-    try { const r = (stage.requestFullscreen || stage.webkitRequestFullscreen).call(stage); if (r && r.catch) r.catch(() => {}); } catch (e) { /* the browser said no */ }
+    const fall = () => { if (fsEl() !== stage && !pseudo) setPseudo(true); };
+    try {
+      const f = stage.requestFullscreen || stage.webkitRequestFullscreen; if (!f) { fall(); return; }
+      const r = f.call(stage); if (r && r.catch) r.catch(fall); else setTimeout(fall, 500);
+    } catch (e) { fall(); }
   }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pseudo) setPseudo(false); });
   const hint = el('div', 'bk-hint'); hint.hidden = true; stage.appendChild(hint); let hintT = 0;
-  const flash = (txt, ms) => { hint.textContent = txt; hint.hidden = false; hint.classList.remove('out'); clearTimeout(hintT); hintT = setTimeout(() => { hint.classList.add('out'); }, ms); };
-  const fsChanged = () => { const on = fsEl() === stage; stage.classList.toggle('full', on); if (on) flash('Click the sides or use the arrow keys to turn pages. Press Esc to leave full screen.', 3500); else hint.hidden = true; };
+  // the stage scrolls when zoomed, so keep the hint on the visible bottom edge
+  const pinHint = () => { hint.style.bottom = 'auto'; hint.style.left = (stage.scrollLeft + stage.clientWidth / 2) + 'px'; hint.style.top = (stage.scrollTop + stage.clientHeight - hint.offsetHeight - 18) + 'px'; };
+  stage.addEventListener('scroll', () => { if (!hint.hidden) pinHint(); });
+  const flash = (txt, ms) => { hint.textContent = txt; hint.hidden = false; pinHint(); hint.classList.remove('out'); clearTimeout(hintT); hintT = setTimeout(() => { hint.classList.add('out'); }, ms); };
+  const fsChanged = () => { const on = fsEl() === stage || pseudo; stage.classList.toggle('full', on); if (on) flash('Click the sides or use the arrow keys to turn pages. Press Esc to leave full screen.', 3500); else hint.hidden = true; };
   document.addEventListener('fullscreenchange', fsChanged); document.addEventListener('webkitfullscreenchange', fsChanged);
-  $('#bk-fs').onclick = fullscreen; if (!canFs) $('#bk-fs').hidden = true;
+  $('#bk-fs').onclick = fullscreen; 
 
   // ---- controls
   $('#bk-prev').onclick = () => turn(-1); $('#bk-next').onclick = () => turn(1);
@@ -237,7 +248,7 @@ export function mountCatalog(env) {
   });
   return {
     ensure() { if (!st.loaded) load(); },
-    eraChanged() { if (!st.loaded) return; if (getEra().y !== st.year) { st.manual = false; load(); } else if (!st.manual) { const c = pick(); if (c && (!st.cur || st.cur.title !== c.title)) open(c); } },
+    eraChanged() { if (!st.loaded) return; if (getEra().y !== st.year || seasonOf(getEra().m) !== st.season) { st.manual = false; load(); } else if (!st.manual) { const c = pick(); if (c && (!st.cur || st.cur.title !== c.title)) open(c); } },
     turn, fullscreen, zoomIn: () => step(1), zoomOut: () => step(-1), zoomFit: () => zoom(1), first: () => go(0), last: () => go(lastSpread()), library: () => { if (st.loaded) { drawLib(); lib.hidden = false; } },
     toggleSide: () => $('#bk-side-btn').click(), page: () => st.cur && pagesOf(st.spread)[0]
   };

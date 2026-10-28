@@ -214,7 +214,7 @@ export async function catalogsFor(year) {
   return all.map((c) => (Array.isArray(c) ? c : [c.catalogName, c.catalogPageCount]))
     .filter(([n]) => n.indexOf(year + '-') === 0 && !/Canada/.test(n))
     .map(([n, pages]) => { const title = n.replace(/-/g, ' '); return {title, pages, brand: /Sears/.test(title) ? 'Sears' : 'JCPenney', season: SEASONS.find((s) => title.indexOf(s) >= 0) || ''}; })
-    .sort((a, b) => a.brand.localeCompare(b.brand) || a.title.localeCompare(b.title));
+    .sort((a, b) => SEASONS.indexOf(a.season) - SEASONS.indexOf(b.season) || b.brand.localeCompare(a.brand));   // through the year; JCPenney before Sears
 }
 export async function catalogPage(title, n) {
   const j = await getJSON(SCANS + 'CatalogPageByCatalogNameAndCatalogPageNumber?strCatalogName=' + encodeURIComponent(title) + '&strCatalogPageNumber=' + n, 40000);
