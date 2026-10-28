@@ -3,6 +3,7 @@
 ## 2026-10-28
 
 ### Added
+- Screenshots of the TV, normal and maximized (a frame from a 2001 commercial on the Internet Archive), in the README and the gallery.
 - **Gallery** (`gallery.html`): the screenshots as a thumbnail grid that opens in a lightbox, with arrow keys and swipe, linked from the README.
 - Restart now boots straight back up instead of stopping at the power button; Movie Night's "Add both to watchlist" confirms the add.
 - **Catalog app:** the real printed JCPenney and Sears catalogs for the year on the clock, as page scans from christmas.musetechnical.com.

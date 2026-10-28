@@ -10,7 +10,7 @@ Set the date and the machine fills with the real music, movies, TV shows and web
 
 ## Screenshots
 
-<p align="center"><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Browse the full gallery (13 pictures)</a></b></p>
+<p align="center"><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Browse the full gallery (14 pictures)</a></b></p>
 
 <table>
   <tr>
@@ -20,6 +20,10 @@ Set the date and the machine fills with the real music, movies, TV shows and web
   <tr>
     <td width="50%" align="center" valign="top"><img src="screenshots/catalog.png" alt="Catalog showing a 2005 JCPenney Christmas Book spread" width="100%"><br><b>Catalog</b>, real scanned spreads</td>
     <td width="50%" align="center" valign="top"><img src="screenshots/movienight.png" alt="Movie Night shelf with two films picked for tonight" width="100%"><br><b>Movie Night</b>, your watchlist on a shelf</td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="top"><img src="screenshots/tv.png" alt="The TV showing a commercial break from 2001" width="100%"><br><b>TV</b>, real recordings of the era</td>
+    <td width="50%" align="center" valign="top"><img src="screenshots/tv-wide.png" alt="The TV maximized, with speakers either side of the picture" width="100%"><br><b>TV</b>, maximized</td>
   </tr>
   <tr>
     <td width="50%" align="center" valign="top"><img src="screenshots/oldweb.png" alt="Old Web showing the On this day page" width="100%"><br><b>Old Web</b>, opening on the day on your clock</td>
@@ -39,7 +43,7 @@ For anyone who misses the early internet. It is a time capsule to look around in
 | --- | --- |
 | **Movie Guide** | Don't know what to watch? Open it and find something. Browse movies and TV shows from the era, filter by year, genre or network, press the **Surprise me** button for a random pick, or press the **Movie Night** button to get a double feature. Save favorites to a watchlist, then switch it to the **Shelf**: your saved titles stand on a video store shelf, and clicking boxes builds tonight's bill with start times, an intermission and when the lights come up, ready to copy or print. |
 | **uTunes** | The Billboard Year-End Hot 100 for every year, with the music videos. Build a playlist, then send it to Spotify or Apple Music (see below). |
-| **TV** | An old TV with channels 1 to 69: shows from the era, a news channel (channel 1) from the exact date on your clock, commercials and Saturday morning cartoons. |
+| **TV** | An old TV with ten channels of real recordings from the year on your clock: news (from the exact date), Saturday morning cartoons, commercials, kids TV, cartoons, sitcoms, dramas, late night, music TV, and sports and movies. Type a channel on the keypad or keyboard, or use the arrow keys. Press F for full screen. |
 | **Old Web** | Real websites as the Internet Archive saved them near your date. It opens on an "On this day" page with headlines, the number one song and movie, what was on TV and a picture of the day, and it dials in with a modem the first time. |
 | **TV Guide** | The printed TV listings, in the same page-flipping viewer as the Catalog. It opens the week on your clock as a recreated magazine: four pages for every day of what ABC, CBS, NBC, Fox, UPN and The WB ran, with the prime time hours in yellow. The Library also holds the real TV Guide issues that survive online as scans (1997 to 2002), and one opens by itself when its week matches your clock. |
 | **Catalog** | The real printed JCPenney and Sears catalogs of the year on your clock, as page scans you flip through like a book: every book of the year on your clock, opening on the one for the current quarter (Spring and Summer from January to June, Fall and Winter from July to September, Christmas from October to December). Click the sides or drag to turn pages, zoom in, jump with the page sidebar, open the **Library** for the older books of that year, or press **F** for true full screen. |
@@ -68,6 +72,7 @@ It is plain HTML, CSS and JavaScript (ES modules) with no build step, no server 
 - **"On this day":** Wikipedia date pages and current events, with Wikimedia Commons pictures of the day
 - **Videos:** found through public Piped search instances and played in YouTube's embedded player (videos that disallow embedding are skipped)
 - **Old websites:** the Internet Archive's Wayback Machine
+- **TV recordings:** the Internet Archive's video collections (VHS tapes of real broadcasts, commercial reels, news, cartoons), streamed straight from archive.org into a video player
 - **Catalog pages:** scans from [christmas.musetechnical.com](https://christmas.musetechnical.com/), loaded straight from your browser to their server (their server only handles two requests at a time, so new pages take a moment; pages you have seen are kept in your browser)
 
 ### Chat
@@ -113,7 +118,7 @@ Built by Claude, an AI made by Anthropic, and directed by Hert Niks.
 
 Chat uses [Trystero](https://github.com/dmotz/trystero) (MIT). Wikipedia text is available under CC BY-SA and is read live, not copied into this repository.
 
-The catalog pages are scans of real printed JCPenney and Sears catalogs, hosted by [christmas.musetechnical.com](https://christmas.musetechnical.com/) and shown here by linking to them, not copied into this repository. This is a fan tribute. Apart from those scans, names, marks, icons and sounds are original or generated in the browser. It has no connection to any real company or service and uses none of their logos or recordings.
+The catalog pages are scans of real printed JCPenney and Sears catalogs, hosted by [christmas.musetechnical.com](https://christmas.musetechnical.com/) and shown here by linking to them, not copied into this repository. This is a fan tribute. The TV plays recordings from the Internet Archive, streamed from archive.org and not copied into this repository; the TV screenshots show a frame from a 2001 commercial on the Archive. Apart from those scans and recordings, names, marks, icons and sounds are original or generated in the browser. It has no connection to any real company or service, and its own logos and interface use none of theirs.
 
 ## License
 
