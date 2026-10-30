@@ -4,6 +4,12 @@
 
 <p align="center"><b>A computer from 1996 to 2005, running in your browser.</b></p>
 
+<p align="center">
+  <a href="https://hertn.github.io/nostalgia-desktop/"><img src="https://img.shields.io/badge/live%20demo-open-2ea44f?style=flat&amp;labelColor=15181e" alt="Live demo"></a>
+  <a href="https://github.com/hertn/nostalgia-desktop/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hertn/nostalgia-desktop?style=flat&amp;labelColor=15181e&amp;color=blue" alt="License"></a>
+  <a href="https://ko-fi.com/hertn"><img src="https://img.shields.io/badge/support-%E2%9D%A4%20Ko--fi-ff5e5b?style=flat&amp;labelColor=15181e&amp;logo=kofi&amp;logoColor=white" alt="Support on Ko-fi"></a>
+</p>
+
 Set the date and the machine fills with the real music, movies, TV shows and websites of that moment. It looks like an early-2000s Mac desktop, with a dock, a menu bar, a buddy list, a screen saver and a very slow modem. Everything in it is from 1996 to 2005, and nothing newer ever appears.
 
 **Live demo:** https://hertn.github.io/nostalgia-desktop/
