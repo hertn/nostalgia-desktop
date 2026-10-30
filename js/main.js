@@ -1659,6 +1659,7 @@ const ABOUTS = {
     'For anyone who misses the early internet. It is a time capsule to look around in, a place to find something to watch or listen to, and a way to chat with other people who remember.',
     '## Who made it',
     'Built by Claude, an AI made by Anthropic, and directed by Hert Niks. The code is open source: https://github.com/hertn/nostalgia-desktop',
+    'It is free, with no ads. If you enjoy it, you can leave a tip: https://ko-fi.com/hertn',
     'A fan tribute, not connected to any company or service. Content is looked up live from Wikipedia, Wikidata, Wikimedia Commons, YouTube and the Internet Archive.']],
   'uTunes': ['uTunes', ['Music from the Billboard year-end charts, 1996 to 2005.', 'Part of Nostalgia Desktop.']],
   'QuickShow': ['QuickShow', ['A small video player for trailers and TV openings.', 'Part of Nostalgia Desktop.']],

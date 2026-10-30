@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-30
+
+### Added
+- A Ko-fi tip link in About Nostalgia Desktop, the README and the gallery. The site stays free.
+
 ## 2026-10-28
 
 ### Added

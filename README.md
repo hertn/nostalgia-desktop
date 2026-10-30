@@ -120,6 +120,10 @@ Chat uses [Trystero](https://github.com/dmotz/trystero) (MIT). Wikipedia text is
 
 The catalog pages are scans of real printed JCPenney and Sears catalogs, hosted by [christmas.musetechnical.com](https://christmas.musetechnical.com/) and shown here by linking to them, not copied into this repository. This is a fan tribute. The TV plays recordings from the Internet Archive, streamed from archive.org and not copied into this repository; the TV screenshots show a frame from a 2001 commercial on the Archive. Apart from those scans and recordings, names, marks, icons and sounds are original or generated in the browser. It has no connection to any real company or service, and its own logos and interface use none of theirs.
 
+## Support
+
+Nostalgia Desktop is free, with no ads. If you enjoy it, you can [buy me a coffee on Ko-fi](https://ko-fi.com/hertn).
+
 ## License
 
 MIT. See `LICENSE`.
