@@ -12,8 +12,6 @@
 
 Set the date and the machine fills with the real music, movies, TV shows and websites of that moment. It looks like an early-2000s Mac desktop, with a dock, a menu bar, a buddy list, a screen saver and a very slow modem. Everything in it is from 1996 to 2005, and nothing newer ever appears.
 
-**Live demo:** https://hertn.github.io/nostalgia-desktop/
-
 ## Screenshots
 
 <p align="center"><b><a href="https://hertn.github.io/nostalgia-desktop/gallery.html">Browse the full gallery (14 pictures)</a></b></p>
