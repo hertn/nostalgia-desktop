@@ -334,6 +334,7 @@ function iconAct(el, fn) {
 }
 iconAct($('#ic-cd'), () => openWin('w-utunes'));
 iconAct($('#ic-hd'), () => openAbout('Nostalgia Desktop'));
+{ const web = $('#ic-web'); web.addEventListener('click', (e) => e.preventDefault()); iconAct(web, () => { location.href = web.href; }); }   // hertn's other projects: opens like the other icons (double-click, or a tap on touch screens)
 $('#ic-cd')._ctx = () => [{t: 'Open', fn: () => openWin('w-utunes')}];
 $('#ic-hd')._ctx = () => [{t: 'Open', fn: () => openAbout('Nostalgia Desktop')}];
 
